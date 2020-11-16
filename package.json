@@ -1,0 +1,17 @@
+{
+  "name": "simracingwebsite",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:AxelZublena/SimracingWebsite.git",
+  "author": "Axel Zublena",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc-watch "
+  },
+  "devDependencies": {
+    "typescript": "^4.0",
+    "tsc-watch": "^4.0"
+  }
+}
