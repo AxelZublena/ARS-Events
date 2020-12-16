@@ -1,0 +1,38 @@
+#dash{
+    margin-left: -18vw;
+}
+
+.tile{
+    position: absolute;
+    background-color: white;
+    border-radius: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.5);
+    padding: 2vw;
+}
+
+.options{
+    padding-bottom: 25px;
+}
+.options input{
+    border-radius: 15px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    padding: 5px;
+    margin-top: 5px;
+}
+.tile button{
+    border-radius: 15px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    min-width: 100%;
+    /*background-color: #ff2f3b;*/
+    padding: 5px;
+}
+.tile button:hover{
+    cursor: pointer;
+    background-color: #ff2f3b;
+}
