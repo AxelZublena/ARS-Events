@@ -1,39 +1,125 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 class Dashboard {
     constructor() {
         console.log("App is ready");
         this.display = new Display();
         this.raceEvents = [];
-        for (let i = 0; i < 6; i++) {
-            this.raceEvents.push(new RaceEvent());
-        }
         const newEventButton = document.getElementById("newEvent");
         newEventButton.addEventListener("click", () => this.newEvent());
+        fetch("/loadEvent")
+            .then((response) => {
+            return response.json();
+        })
+            .then((json) => {
+            console.log(json);
+            json.array.forEach((raceEvent) => {
+                this.raceEvents.push(new RaceEvent(raceEvent.tracks, raceEvent.cars, raceEvent.trackImg, raceEvent.carImg, raceEvent.participants, raceEvent.maxParticipants, new Date(raceEvent.date), raceEvent.eventImg, raceEvent.info, raceEvent._id));
+            });
+            this.display.updateEventList(this.raceEvents);
+            console.log(this.raceEvents);
+        });
     }
     newEvent() {
-        this.raceEvents.push(new RaceEvent());
+        const tracks = [
+            {
+                name: "Adria Karting Raceway (Paid DLC – KartSim)",
+                link: "https://steamcommunity.com/workshop/about/?appid=365960"
+            },
+            {
+                name: "Adria Karting Raceway (Paid DLC – KartSim)",
+                link: "https://steamcommunity.com/workshop/about/?appid=365960"
+            }
+        ];
+        const cars = [
+            {
+                name: "2019 Aston Martin Vantage GT3 (Paid DLC)",
+                link: "https://steamcommunity.com/workshop/about/?appid=365960"
+            },
+            {
+                name: "2020 Bentley Continental GT3 (Paid DLC)",
+                link: ""
+            }
+        ];
+        const trackImg = "/assets/img/rf2.jpg";
+        const carImg = "/assets/img/rf2.jpg";
+        const participants = ["Bob Panda", "Taulier", "Frednz"];
+        const maxParticipants = 24;
+        const date = new Date(2020, 11, 19, 20, 30, 0, 0);
+        const eventImg = "/assets/img/rf2.jpg";
+        const info = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
+        this.raceEvents.push(new RaceEvent(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info));
         this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
         this.display.update(this.currentRaceEvent, this.raceEvents);
+        const saveButton = document.getElementById("save-btn");
+        saveButton.addEventListener("click", () => this.saveToDB());
+        const deleteButton = document.getElementById("delete-btn");
+        deleteButton.addEventListener("click", () => this.removeFromDB());
         console.log(this.raceEvents);
     }
-    createRaceEvent(raceEvent) {
+    saveToDB() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = this.currentRaceEvent.generateJSON();
+            const options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            };
+            const response = yield fetch("/update", options);
+            const json = yield response.json();
+            console.log(json);
+        });
     }
-    removeRaceEvent(raceEvent) {
+    removeFromDB() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = { _id: this.currentRaceEvent.generateJSON()._id };
+            const options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            };
+            const response = yield fetch("/remove", options);
+            const json = yield response.json();
+            console.log(json);
+        });
     }
 }
 class Display {
     constructor() {
         this.eventContent = document.querySelector(".app-main");
         this.eventList = document.querySelector(".event-container");
-        this.initDOM = this.createInitDOM();
     }
     update(currentRaceEvent, raceEvents) {
+        this.initDOM = this.createInitDOM();
         this.eventContent.append(this.initDOM);
         this.raceEvent = currentRaceEvent;
-        document.getElementById("addTrackButton").addEventListener("click", () => this.addTrack());
-        document.getElementById("addCarButton").addEventListener("click", () => this.addCar());
-        document.getElementById("addParticipantButton").addEventListener("click", () => this.addParticipant());
+        const trackButton = document.getElementById("addTrackButton");
+        trackButton.addEventListener("click", () => this.addTrack());
+        const carButton = document.getElementById("addCarButton");
+        carButton.addEventListener("click", () => this.addCar());
+        const participantButton = document.getElementById("addParticipantButton");
+        participantButton.addEventListener("click", () => this.addParticipant());
         const trackImg = document.getElementById("trackImg");
-        trackImg.addEventListener("change", () => console.log(trackImg.files[0]));
+        trackImg.addEventListener("change", (event) => this.uploadTrackImg(event));
+        const carImg = document.getElementById("carImg");
+        carImg.addEventListener("change", (event) => this.uploadCarImg(event));
+        const dateInput = document.getElementById("dateInput");
+        dateInput.addEventListener("change", () => this.changeDate());
+        const participantMaxInput = document.getElementById("participantInput");
+        participantMaxInput.addEventListener("change", () => this.changeParticipantMax());
+        const infoInput = document.getElementById("textInfo");
+        infoInput.addEventListener("change", () => this.changeInfo());
         this.updateDate();
         this.updateParticipantMax();
         this.updateInfo();
@@ -43,10 +129,49 @@ class Display {
         this.updateParticipant();
         this.updateEventList(raceEvents);
     }
+    uploadTrackImg(event) {
+        const files = event.target.files;
+        const formData = new FormData();
+        formData.append("myFile", files[0]);
+        formData.append("id", this.raceEvent.getId().toString());
+        formData.append("type", "track");
+        fetch("/store-img", {
+            method: "POST",
+            body: formData
+        })
+            .then((response) => response.json())
+            .then((data) => {
+            console.log(data);
+            this.raceEvent.setTrackImg("/assets/events-img/" + data.name);
+            this.updateImgs();
+        })
+            .catch((error) => {
+            console.error(error);
+        });
+    }
+    uploadCarImg(event) {
+        const files = event.target.files;
+        const formData = new FormData();
+        formData.append("myFile", files[0]);
+        formData.append("id", this.raceEvent.getId().toString());
+        formData.append("type", "car");
+        fetch("/store-img", {
+            method: "POST",
+            body: formData
+        })
+            .then((response) => response.json())
+            .then((data) => {
+            console.log(data);
+            this.raceEvent.setCarImg("/assets/events-img/" + data.name);
+            this.updateImgs();
+        })
+            .catch((error) => {
+            console.error(error);
+        });
+    }
     updateEventList(raceEvents) {
         const container = document.querySelector(".event-container");
         let children = container.children;
-        console.log(children.item(5));
         while (children.length > 1) {
             const event = children.item(children.length - 1);
             if (event.id !== "newEvent") {
@@ -64,6 +189,11 @@ class Display {
             blur.append(date);
             main.append(blur);
             container.append(main);
+            main.addEventListener("click", () => {
+                this.raceEvent = raceEvent;
+                console.log(raceEvent.getId());
+                this.update(this.raceEvent, raceEvents);
+            });
         });
     }
     updateDate() {
@@ -71,12 +201,33 @@ class Display {
         field.value = this.raceEvent.getDate().toString();
     }
     updateParticipantMax() {
-        const field = (document.getElementById("participantInput"));
+        const field = document.getElementById("participantInput");
         field.value = this.raceEvent.getParticipantMax().toString();
+        this.updateParticipant();
     }
     updateInfo() {
         const field = document.getElementById("textInfo");
         field.value = this.raceEvent.getInfo();
+    }
+    changeDate() {
+        const field = document.getElementById("dateInput");
+        this.raceEvent.setDate(new Date(field.value));
+    }
+    changeParticipantMax() {
+        const field = document.getElementById("participantInput");
+        const number = parseInt(field.value);
+        if (number > this.raceEvent.getParticipants().length) {
+            this.raceEvent.setParticipantMax(number);
+        }
+        else {
+            this.raceEvent.setParticipantMax(this.raceEvent.getParticipants().length);
+        }
+        this.updateParticipantMax();
+    }
+    changeInfo() {
+        const field = document.getElementById("textInfo");
+        this.raceEvent.setInfo(field.value);
+        this.raceEvent.generateJSON();
     }
     updateTracks() {
         const container = document.getElementById("track-text").children[1];
@@ -128,8 +279,7 @@ class Display {
     }
     removeElement(event) {
         const element = event.target.parentElement.children[0];
-        if (element.parentElement.parentElement.parentElement.id ===
-            "track-text") {
+        if (element.parentElement.parentElement.parentElement.id === "track-text") {
             this.raceEvent.removeTrack(element.innerHTML);
             this.updateTracks();
             return 0;
@@ -139,8 +289,7 @@ class Display {
             this.updateCars();
             return 0;
         }
-        if (element.parentElement.parentElement.parentElement.id ===
-            "participants-text") {
+        if (element.parentElement.parentElement.parentElement.id === "participants-text") {
             this.raceEvent.removeParticipant(element.innerHTML);
             this.updateParticipant();
             return 0;
@@ -150,10 +299,12 @@ class Display {
     updateImgs() {
         const trackContainer = document.getElementById("trackImg");
         const carContainer = document.getElementById("carImg");
+        trackContainer.style.backgroundImage = `url("")`;
         trackContainer.style.backgroundImage = `url("${this.raceEvent.getTrackImg()}")`;
         trackContainer.style.backgroundSize = "auto 100%";
         trackContainer.style.backgroundPosition = "center";
         trackContainer.style.animation = "none";
+        carContainer.style.backgroundImage = `url("")`;
         carContainer.style.backgroundImage = `url("${this.raceEvent.getCarImg()}")`;
         carContainer.style.backgroundSize = "auto 100%";
         carContainer.style.backgroundPosition = "center";
@@ -176,7 +327,7 @@ class Display {
             item.append(remove);
             container.append(item);
         });
-        for (let i = 0; i < this.raceEvent.getParticipantMax(); i++) {
+        for (let i = 0; i < this.raceEvent.getParticipantMax() - this.raceEvent.getParticipants().length; i++) {
             const item = document.createElement("div");
             item.className = "item empty-place";
             const button = document.createElement("a");
@@ -209,7 +360,13 @@ class Display {
         this.updateParticipant();
     }
     createInitDOM() {
-        let html = document.createElement("div");
+        const title = document.querySelector(".dashboard-title");
+        title.innerHTML =
+            `<div id="save-del">
+                <h2 id="save-btn">Enregistrer</h2>
+                <h2 id="delete-btn">Supprimer</h2>
+            </div>`;
+        const html = document.createElement("div");
         html.className = "event";
         html.innerHTML = `<div class="event-tile" id="track">
                 <input type="file" class="file-opener" name="trackImg" id="trackImg" accept="image/png, image/jpeg">
@@ -327,38 +484,67 @@ class Display {
     }
 }
 class RaceEvent {
-    constructor() {
-        this.tracks = [
-            {
-                name: "Adria Karting Raceway (Paid DLC – KartSim)",
-                link: "https://steamcommunity.com/workshop/about/?appid=365960",
-            },
-            {
-                name: "Adria Karting Raceway (Paid DLC – KartSim)",
-                link: "https://steamcommunity.com/workshop/about/?appid=365960",
-            },
-        ];
-        this.cars = [
-            {
-                name: "2019 Aston Martin Vantage GT3 (Paid DLC)",
-                link: "https://steamcommunity.com/workshop/about/?appid=365960",
-            },
-            {
-                name: "2020 Bentley Continental GT3 (Paid DLC)",
-                link: "",
-            },
-        ];
-        this.trackImg = "/assets/img/rf2.jpg";
-        this.carImg = "/assets/img/rf2.jpg";
-        this.participants = ["Bob Panda", "Taulier", "Frednz"];
-        this.maxParticipants = 24;
-        this.date = new Date(2020, 11, 19, 20, 30, 0, 0);
-        this.eventImg = this.carImg || "/assets/img/rf2.jpg";
-        this.info =
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
+    constructor(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info, id = "") {
+        this.tracks = tracks;
+        this.cars = cars;
+        this.trackImg = trackImg;
+        this.carImg = carImg;
+        this.participants = participants;
+        this.maxParticipants = maxParticipants;
+        this.date = date;
+        this.eventImg = eventImg;
+        this.info = info;
+        this.id = id;
+        if (this.id === "") {
+            console.log("Create new raceEvent.");
+            const data = this.generateJSON();
+            const options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            };
+            fetch("/newRaceEvent", options)
+                .then((response) => response.json())
+                .then((data) => {
+                console.log(data);
+                this.id = data._id;
+            })
+                .catch((error) => {
+                console.error(error);
+            });
+        }
+    }
+    generateJSON() {
+        const json = {
+            tracks: this.tracks,
+            cars: this.cars,
+            trackImg: this.trackImg,
+            carImg: this.carImg,
+            participants: this.participants,
+            maxParticipants: this.maxParticipants,
+            date: this.date,
+            info: this.info,
+            eventImg: this.eventImg,
+            _id: this.id
+        };
+        return json;
+    }
+    setDate(date) {
+        this.date = date;
+    }
+    setParticipantMax(number) {
+        this.maxParticipants = number;
+    }
+    setInfo(text) {
+        this.info = text;
     }
     setTrackImg(src) {
-        this.trackImg = "/assets/img/" + src;
+        this.trackImg = src;
+    }
+    setCarImg(src) {
+        this.carImg = src;
     }
     removeTrack(name) {
         this.tracks = this.tracks.filter((track) => track.name !== name);
@@ -405,6 +591,9 @@ class RaceEvent {
         }
         console.log(this.participants);
     }
+    getId() {
+        return this.id;
+    }
     getDate() {
         return this.date.toISOString().slice(0, 16);
     }
@@ -431,6 +620,10 @@ class RaceEvent {
     }
 }
 window.addEventListener("load", init);
+window.onbeforeunload = function (e) {
+    e = e || window.event;
+    return 'Sure?';
+};
 function init() {
     const dashboard = new Dashboard();
 }

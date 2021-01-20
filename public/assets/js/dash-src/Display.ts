@@ -1,6 +1,5 @@
 class Display {
 	private initDOM: HTMLElement;
-	private body: HTMLElement;
 
 	private eventContent: HTMLElement;
 	private eventList: HTMLElement;
@@ -11,19 +10,38 @@ class Display {
 		this.eventContent = document.querySelector(".app-main");
 		this.eventList = document.querySelector(".event-container");
 
-		this.initDOM = this.createInitDOM();
 	}
 
 	public update(currentRaceEvent: RaceEvent, raceEvents: RaceEvent[]) {
+		this.initDOM = this.createInitDOM();
+
 		this.eventContent.append(this.initDOM);
 		this.raceEvent = currentRaceEvent;
 
-        document.getElementById("addTrackButton").addEventListener("click", () => this.addTrack());
-        document.getElementById("addCarButton").addEventListener("click", () => this.addCar());
-        document.getElementById("addParticipantButton").addEventListener("click", () => this.addParticipant());
+        const trackButton = document.getElementById("addTrackButton"); 
+		trackButton.addEventListener("click", () => this.addTrack());
 
-        const trackImg = <HTMLInputElement>document.getElementById("trackImg"); 
-        trackImg.addEventListener("change", () => console.log(trackImg.files[0]));
+        const carButton = document.getElementById("addCarButton"); 
+		carButton.addEventListener("click", () => this.addCar());
+
+        const participantButton = document.getElementById("addParticipantButton");
+		participantButton.addEventListener("click", () => this.addParticipant());
+
+		const trackImg = <HTMLInputElement>document.getElementById("trackImg");
+		trackImg.addEventListener("change", (event) => this.uploadTrackImg(event));
+
+		const carImg = <HTMLInputElement>document.getElementById("carImg");
+		carImg.addEventListener("change", (event) => this.uploadCarImg(event));
+
+		const dateInput = <HTMLInputElement>document.getElementById("dateInput");
+        dateInput.addEventListener("change", () => this.changeDate()); 
+
+		const participantMaxInput= <HTMLInputElement>document.getElementById("participantInput");
+        participantMaxInput.addEventListener("change", () => this.changeParticipantMax()); 
+
+		const infoInput = <HTMLTextAreaElement>document.getElementById("textInfo");
+        infoInput.addEventListener("change", () => this.changeInfo());
+
 
 		this.updateDate();
 		this.updateParticipantMax();
@@ -35,10 +53,53 @@ class Display {
 		this.updateEventList(raceEvents);
 	}
 
+	public uploadTrackImg(event: Event) {
+		const files = (event.target as HTMLInputElement).files;
+		const formData = new FormData();
+		formData.append("myFile", files[0]);
+		formData.append("id", this.raceEvent.getId().toString());
+		formData.append("type", "track");
+
+		fetch("/store-img", {
+			method: "POST",
+			body: formData
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+                this.raceEvent.setTrackImg("/assets/events-img/"+data.name);
+                this.updateImgs();
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	}
+
+	public uploadCarImg(event: Event) {
+		const files = (event.target as HTMLInputElement).files;
+		const formData = new FormData();
+		formData.append("myFile", files[0]);
+		formData.append("id", this.raceEvent.getId().toString());
+		formData.append("type", "car");
+
+		fetch("/store-img", {
+			method: "POST",
+			body: formData
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+                this.raceEvent.setCarImg("/assets/events-img/"+data.name);
+                this.updateImgs();
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	}
+
 	public updateEventList(raceEvents: RaceEvent[]) {
 		const container = document.querySelector(".event-container");
 		let children = container.children;
-		console.log(children.item(5));
 		while (children.length > 1) {
 			const event = children.item(children.length - 1);
 			if (event.id !== "newEvent") {
@@ -60,6 +121,14 @@ class Display {
 			blur.append(date);
 			main.append(blur);
 			container.append(main);
+
+            // Add event listener
+            main.addEventListener("click", () => {
+                // Does not really work
+                this.raceEvent = raceEvent;
+                console.log(raceEvent.getId())
+                this.update(this.raceEvent, raceEvents)
+            });
 		});
 	}
 
@@ -68,15 +137,38 @@ class Display {
 		field.value = this.raceEvent.getDate().toString();
 	}
 	private updateParticipantMax() {
-		const field = <HTMLInputElement>(
-			document.getElementById("participantInput")
-		);
+		const field = <HTMLInputElement>document.getElementById("participantInput");
 		field.value = this.raceEvent.getParticipantMax().toString();
+        this.updateParticipant();
 	}
 	private updateInfo() {
 		const field = <HTMLTextAreaElement>document.getElementById("textInfo");
 		field.value = this.raceEvent.getInfo();
 	}
+
+    private changeDate(){
+		const field = <HTMLInputElement>document.getElementById("dateInput");
+        this.raceEvent.setDate(new Date(field.value));
+    }
+	private changeParticipantMax() {
+		const field = <HTMLInputElement>document.getElementById("participantInput");
+        const number = parseInt(field.value);
+        if(number > this.raceEvent.getParticipants().length){
+            this.raceEvent.setParticipantMax(number);
+        }
+        else{
+            this.raceEvent.setParticipantMax(this.raceEvent.getParticipants().length);
+        }
+
+        this.updateParticipantMax();
+	}
+	private changeInfo() {
+		const field = <HTMLTextAreaElement>document.getElementById("textInfo");
+        this.raceEvent.setInfo(field.value);
+
+        this.raceEvent.generateJSON();
+	}
+
 	private updateTracks() {
 		const container = document.getElementById("track-text").children[1];
 		container.innerHTML = "";
@@ -98,9 +190,7 @@ class Display {
 			remove.className = "delete-element track-item";
 			remove.innerHTML = "&times";
 
-			remove.addEventListener("click", (event) =>
-				this.removeElement(event)
-			);
+			remove.addEventListener("click", (event) => this.removeElement(event));
 
 			item.append(text);
 			item.append(remove);
@@ -129,9 +219,7 @@ class Display {
 			remove.className = "delete-element car-item";
 			remove.innerHTML = "&times";
 
-			remove.addEventListener("click", (event) =>
-				this.removeElement(event)
-			);
+			remove.addEventListener("click", (event) => this.removeElement(event));
 
 			item.append(text);
 			item.append(remove);
@@ -143,25 +231,17 @@ class Display {
 	private removeElement(event: Event) {
 		const element = (event.target as Element).parentElement.children[0];
 
-		if (
-			element.parentElement.parentElement.parentElement.id ===
-			"track-text"
-		) {
+		if (element.parentElement.parentElement.parentElement.id === "track-text") {
 			this.raceEvent.removeTrack(element.innerHTML);
 			this.updateTracks();
 			return 0;
 		}
-		if (
-			element.parentElement.parentElement.parentElement.id === "car-text"
-		) {
+		if (element.parentElement.parentElement.parentElement.id === "car-text") {
 			this.raceEvent.removeCar(element.innerHTML);
 			this.updateCars();
 			return 0;
 		}
-		if (
-			element.parentElement.parentElement.parentElement.id ===
-			"participants-text"
-		) {
+		if (element.parentElement.parentElement.parentElement.id === "participants-text") {
 			this.raceEvent.removeParticipant(element.innerHTML);
 			this.updateParticipant();
 			return 0;
@@ -173,11 +253,13 @@ class Display {
 		const trackContainer = document.getElementById("trackImg");
 		const carContainer = document.getElementById("carImg");
 
+		trackContainer.style.backgroundImage = `url("")`;
 		trackContainer.style.backgroundImage = `url("${this.raceEvent.getTrackImg()}")`;
 		trackContainer.style.backgroundSize = "auto 100%";
 		trackContainer.style.backgroundPosition = "center";
 		trackContainer.style.animation = "none";
 
+		carContainer.style.backgroundImage = `url("")`;
 		carContainer.style.backgroundImage = `url("${this.raceEvent.getCarImg()}")`;
 		carContainer.style.backgroundSize = "auto 100%";
 		carContainer.style.backgroundPosition = "center";
@@ -200,9 +282,7 @@ class Display {
 			remove.className = "delete-element participant-item";
 			remove.innerHTML = "&times";
 
-			remove.addEventListener("click", (event) =>
-				this.removeElement(event)
-			);
+			remove.addEventListener("click", (event) => this.removeElement(event));
 
 			item.append(player);
 			item.append(remove);
@@ -210,7 +290,7 @@ class Display {
 			container.append(item);
 		});
 
-		for (let i = 0; i < this.raceEvent.getParticipantMax(); i++) {
+		for (let i = 0; i < this.raceEvent.getParticipantMax()-this.raceEvent.getParticipants().length; i++) {
 			const item = document.createElement("div");
 			item.className = "item empty-place";
 
@@ -229,28 +309,38 @@ class Display {
 		}
 	}
 
-    private addTrack(){
-        this.raceEvent.addTrack({
-            name: (document.getElementById("trackName") as HTMLInputElement).value,
-            link: (document.getElementById("trackLink") as HTMLInputElement).value
-        });
-        this.updateTracks();
-    }
-    private addCar(){
-        this.raceEvent.addCar({
-            name: (document.getElementById("carName") as HTMLInputElement).value,
-            link: (document.getElementById("carLink") as HTMLInputElement).value
-        });
-        this.updateCars();
-    }
-    private addParticipant(){
-        this.raceEvent.addParticipant((document.getElementById("playerName") as HTMLInputElement).value);
-        this.updateParticipant();
-    }
     
 
+	private addTrack() {
+		this.raceEvent.addTrack({
+			name: (document.getElementById("trackName") as HTMLInputElement).value,
+			link: (document.getElementById("trackLink") as HTMLInputElement).value
+		});
+		this.updateTracks();
+	}
+	private addCar() {
+		this.raceEvent.addCar({
+			name: (document.getElementById("carName") as HTMLInputElement).value,
+			link: (document.getElementById("carLink") as HTMLInputElement).value
+		});
+		this.updateCars();
+	}
+	private addParticipant() {
+		this.raceEvent.addParticipant(
+			(document.getElementById("playerName") as HTMLInputElement).value
+		);
+		this.updateParticipant();
+	}
+
 	private createInitDOM(): HTMLElement {
-		let html = document.createElement("div");
+        const title = document.querySelector(".dashboard-title");
+        title.innerHTML = 
+            `<div id="save-del">
+                <h2 id="save-btn">Enregistrer</h2>
+                <h2 id="delete-btn">Supprimer</h2>
+            </div>`
+
+		const html = document.createElement("div");
 		html.className = "event";
 		html.innerHTML = `<div class="event-tile" id="track">
                 <input type="file" class="file-opener" name="trackImg" id="trackImg" accept="image/png, image/jpeg">

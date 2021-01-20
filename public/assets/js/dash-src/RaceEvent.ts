@@ -1,4 +1,6 @@
 class RaceEvent {
+	private id: string;
+
 	private tracks: Array<any>;
 	private cars: Array<any>;
 	private trackImg: string;
@@ -7,95 +9,129 @@ class RaceEvent {
 	private participants: string[];
 	private maxParticipants: number;
 
-	//private date: Date; // day + hour
 	private date: Date; // day + hour
 	private eventImg: string;
 	private info: string;
 
-	public constructor() {
-		this.tracks = [
-			{
-				name: "Adria Karting Raceway (Paid DLC – KartSim)",
-				link: "https://steamcommunity.com/workshop/about/?appid=365960",
-			},
-			{
-				name: "Adria Karting Raceway (Paid DLC – KartSim)",
-				link: "https://steamcommunity.com/workshop/about/?appid=365960",
-			},
-		];
-		this.cars = [
-			{
-				name: "2019 Aston Martin Vantage GT3 (Paid DLC)",
-				link: "https://steamcommunity.com/workshop/about/?appid=365960",
-			},
-			{
-				name: "2020 Bentley Continental GT3 (Paid DLC)",
-				link: "",
-			},
-		];
-		this.trackImg = "/assets/img/rf2.jpg";
-		this.carImg = "/assets/img/rf2.jpg";
+	public constructor(tracks: Array<any>, cars: Array<any>, trackImg: string, carImg: string, participants: string[], maxParticipants: number, date: Date, eventImg: string, info: string, id = "") {
 
-		this.participants = ["Bob Panda", "Taulier", "Frednz"];
-		this.maxParticipants = 24;
+        this.tracks = tracks;
+        this.cars = cars;
+        this.trackImg = trackImg;
+        this.carImg = carImg;
+        this.participants = participants;
+        this.maxParticipants = maxParticipants;
+        this.date = date;
+        this.eventImg = eventImg;
+        this.info = info;
 
-		// months range: 0-11
-		this.date = new Date(2020, 11, 19, 20, 30, 0, 0);
-		this.eventImg = this.carImg || "/assets/img/rf2.jpg";
-		this.info =
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
+		this.id = id;
+		if (this.id === "") {
+			console.log("Create new raceEvent.");
+			const data = this.generateJSON();
+			const options = {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(data)
+			};
+			fetch("/newRaceEvent", options)
+				.then((response) => response.json())
+				.then((data) => {
+					console.log(data);
+                    this.id = data._id;
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
 	}
 
-    public setTrackImg(src: string){
-        this.trackImg = "/assets/img/"+src;
-    }
+	public generateJSON() {
+		const json = {
+			tracks: this.tracks,
+			cars: this.cars,
+			trackImg: this.trackImg,
+			carImg: this.carImg,
+			participants: this.participants,
+			maxParticipants: this.maxParticipants,
+			date: this.date,
+			info: this.info,
+			eventImg: this.eventImg,
+			_id: this.id
+		};
 
-    public removeTrack(name: string){
-        this.tracks = this.tracks.filter((track) => track.name !== name);
-    }
-    public removeCar(name: string){
-        this.cars = this.cars.filter((car) => car.name !== name);
-    }
-    public removeParticipant(name: string){
-        this.participants = this.participants.filter((participant) => participant !== name);
-    }
+		return json;
+	}
 
-    public addTrack(track: any){
-        let exist = false;
-        this.tracks.forEach((existingTrack) => {
-            if(existingTrack.link === track.link && existingTrack.name === track.name){
-                exist = true;
-            }
-        });
-        if(!exist){
-            this.tracks.push(track);
-        }
-        console.log(this.tracks);
-    }
-    public addCar(car: any){
-        let exist = false;
-        this.cars.forEach((existingCar) => {
-            if(existingCar.link === car.link && existingCar.name === car.name){
-                exist = true;
-            }
-        });
-        if(!exist){
-            this.cars.push(car);
-        }
-        console.log(this.cars);
-    }
-    public addParticipant(participant: string){
-        let exist = false;
-        this.participants.forEach((existingParticipant) => {
-            if(existingParticipant === participant){
-                exist = true;
-            }
-        });
-        if(!exist){
-            this.participants.push(participant);
-        }
-        console.log(this.participants);
-    }
+	public setDate(date: Date) {
+		this.date = date;
+	}
+	public setParticipantMax(number: number) {
+		this.maxParticipants = number;
+	}
+	public setInfo(text: string) {
+		this.info = text;
+	}
+
+	public setTrackImg(src: string) {
+		this.trackImg = src;
+	}
+	public setCarImg(src: string) {
+		this.carImg = src;
+	}
+
+	public removeTrack(name: string) {
+		this.tracks = this.tracks.filter((track) => track.name !== name);
+	}
+	public removeCar(name: string) {
+		this.cars = this.cars.filter((car) => car.name !== name);
+	}
+	public removeParticipant(name: string) {
+		this.participants = this.participants.filter((participant) => participant !== name);
+	}
+
+	public addTrack(track: any) {
+		let exist = false;
+		this.tracks.forEach((existingTrack) => {
+			if (existingTrack.link === track.link && existingTrack.name === track.name) {
+				exist = true;
+			}
+		});
+		if (!exist) {
+			this.tracks.push(track);
+		}
+		console.log(this.tracks);
+	}
+	public addCar(car: any) {
+		let exist = false;
+		this.cars.forEach((existingCar) => {
+			if (existingCar.link === car.link && existingCar.name === car.name) {
+				exist = true;
+			}
+		});
+		if (!exist) {
+			this.cars.push(car);
+		}
+		console.log(this.cars);
+	}
+	public addParticipant(participant: string) {
+		let exist = false;
+		this.participants.forEach((existingParticipant) => {
+			if (existingParticipant === participant) {
+				exist = true;
+			}
+		});
+		if (!exist) {
+			this.participants.push(participant);
+		}
+		console.log(this.participants);
+	}
+
+	public getId(): string {
+		return this.id;
+	}
 
 	public getDate(): string {
 		return this.date.toISOString().slice(0, 16);
@@ -109,22 +145,22 @@ class RaceEvent {
 		return this.info;
 	}
 
-    public getTracks(): Array<any>{
-        return this.tracks;
-    }
+	public getTracks(): Array<any> {
+		return this.tracks;
+	}
 
-    public getCars(): Array<any>{
-        return this.cars;
-    }
+	public getCars(): Array<any> {
+		return this.cars;
+	}
 
-    public getTrackImg(): string{
-        return this.trackImg;
-    }
-    public getCarImg(): string{
-        return this.carImg;
-    }
+	public getTrackImg(): string {
+		return this.trackImg;
+	}
+	public getCarImg(): string {
+		return this.carImg;
+	}
 
-    public getParticipants(): string[]{
-        return this.participants;
-    }
+	public getParticipants(): string[] {
+		return this.participants;
+	}
 }

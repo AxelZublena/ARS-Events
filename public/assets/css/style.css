@@ -28,6 +28,27 @@ header {
   background-color: white;
   justify-items: center;
 }
+#save-del{
+    display: inline-flex;
+}
+#save-btn{
+    margin-right: 10px;
+    background-color: dodgerblue;
+    border-radius: 20px;
+    padding: 10px 20px;
+}
+#save-btn:hover{
+    cursor: pointer;
+}
+#delete-btn{
+    background-color: #f00000;
+    border-radius: 20px;
+    padding: 10px 20px;
+}
+#delete-btn:hover{
+    cursor: pointer;
+}
+
 #dash {
   font-size: 40px;
 }
