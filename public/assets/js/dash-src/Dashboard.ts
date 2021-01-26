@@ -24,7 +24,6 @@ class Dashboard {
                 return response.json();
             })
             .then((json) => {
-                console.log(json);
                 json.array.forEach((raceEvent: any) => {
                     this.raceEvents.push(
                         new RaceEvent(
@@ -42,9 +41,13 @@ class Dashboard {
                     );
                 });
                 //this.raceEvents = json.array;
-                this.display.updateEventList(this.raceEvents);
+                //this.display.updateEventList(this.raceEvents);
+                console.log(this.currentRaceEvent);
+                this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
+                this.display.update(this.currentRaceEvent, this.raceEvents);
                 console.log(this.raceEvents);
             });
+
 	}
 
 	private newEvent(): void {
@@ -75,7 +78,8 @@ class Dashboard {
 		const maxParticipants = 24;
 
 		// months range: 0-11
-		const date = new Date(2020, 11, 19, 20, 30, 0, 0);
+        //const date = new Date(2020, 11, 19, 20, 30, 0, 0);
+        const date = new Date();
 		const eventImg = "/assets/img/rf2.jpg";
 		const info =
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";

@@ -19,11 +19,12 @@ class Dashboard {
             return response.json();
         })
             .then((json) => {
-            console.log(json);
             json.array.forEach((raceEvent) => {
                 this.raceEvents.push(new RaceEvent(raceEvent.tracks, raceEvent.cars, raceEvent.trackImg, raceEvent.carImg, raceEvent.participants, raceEvent.maxParticipants, new Date(raceEvent.date), raceEvent.eventImg, raceEvent.info, raceEvent._id));
             });
-            this.display.updateEventList(this.raceEvents);
+            console.log(this.currentRaceEvent);
+            this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
+            this.display.update(this.currentRaceEvent, this.raceEvents);
             console.log(this.raceEvents);
         });
     }
@@ -52,7 +53,7 @@ class Dashboard {
         const carImg = "/assets/img/rf2.jpg";
         const participants = ["Bob Panda", "Taulier", "Frednz"];
         const maxParticipants = 24;
-        const date = new Date(2020, 11, 19, 20, 30, 0, 0);
+        const date = new Date();
         const eventImg = "/assets/img/rf2.jpg";
         const info = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
         this.raceEvents.push(new RaceEvent(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info));
