@@ -27,6 +27,10 @@ class Dashboard {
             this.display.update(this.currentRaceEvent, this.raceEvents);
             console.log(this.raceEvents);
         });
+        const saveButton = document.getElementById("save-btn");
+        saveButton.addEventListener("click", () => this.saveToDB());
+        const deleteButton = document.getElementById("delete-btn");
+        deleteButton.addEventListener("click", () => console.log("raceEvent to delete: " + this.currentRaceEvent.getId()));
     }
     newEvent() {
         const tracks = [
@@ -59,14 +63,10 @@ class Dashboard {
         this.raceEvents.push(new RaceEvent(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info));
         this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
         this.display.update(this.currentRaceEvent, this.raceEvents);
-        const saveButton = document.getElementById("save-btn");
-        saveButton.addEventListener("click", () => this.saveToDB());
-        const deleteButton = document.getElementById("delete-btn");
-        deleteButton.addEventListener("click", () => this.removeFromDB());
-        console.log(this.raceEvents);
     }
     saveToDB() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("saving to db");
             const data = this.currentRaceEvent.generateJSON();
             const options = {
                 method: "POST",
@@ -77,7 +77,7 @@ class Dashboard {
             };
             const response = yield fetch("/update", options);
             const json = yield response.json();
-            console.log(json);
+            console.log("saved: " + json);
         });
     }
     removeFromDB() {
@@ -100,9 +100,9 @@ class Display {
     constructor() {
         this.eventContent = document.querySelector(".app-main");
         this.eventList = document.querySelector(".event-container");
+        this.initDOM = this.createInitDOM();
     }
     update(currentRaceEvent, raceEvents) {
-        this.initDOM = this.createInitDOM();
         this.eventContent.append(this.initDOM);
         this.raceEvent = currentRaceEvent;
         const trackButton = document.getElementById("addTrackButton");
@@ -596,6 +596,7 @@ class RaceEvent {
         return this.id;
     }
     getDate() {
+        console.log(this.date);
         return this.date.toISOString().slice(0, 16);
     }
     getParticipantMax() {

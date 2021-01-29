@@ -48,6 +48,12 @@ class Dashboard {
                 console.log(this.raceEvents);
             });
 
+		const saveButton = document.getElementById("save-btn");
+		saveButton.addEventListener("click", () => this.saveToDB());
+
+		const deleteButton = document.getElementById("delete-btn");
+		//deleteButton.addEventListener("click", () => this.removeFromDB());
+		deleteButton.addEventListener("click", () => console.log("raceEvent to delete: " + this.currentRaceEvent.getId()));
 	}
 
 	private newEvent(): void {
@@ -84,6 +90,7 @@ class Dashboard {
 		const info =
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
 
+        // TODO: Wrong ids
 		this.raceEvents.push(
 			new RaceEvent(
 				tracks,
@@ -97,21 +104,16 @@ class Dashboard {
 				info
 			)
 		);
+
 		this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
 
 		this.display.update(this.currentRaceEvent, this.raceEvents);
 
-		const saveButton = document.getElementById("save-btn");
-		saveButton.addEventListener("click", () => this.saveToDB());
-
-		const deleteButton = document.getElementById("delete-btn");
-		deleteButton.addEventListener("click", () => this.removeFromDB());
-
-		console.log(this.raceEvents);
 	}
 
 	// insert a new raceEvent in db (by calling the server)
 	private async saveToDB() {
+        console.log("saving to db");
 		const data = this.currentRaceEvent.generateJSON();
 		const options = {
 			method: "POST",
@@ -122,11 +124,13 @@ class Dashboard {
 		};
 		const response = await fetch("/update", options);
 		const json = await response.json();
-		console.log(json);
+		console.log("saved: " + json);
 	}
 
 	// remove a raceEvent in db (by calling the server)
 	private async removeFromDB() {
+        //Doesn't remove the right raceEvent
+        //console.log(this.currentRaceEvent);
 		const data = { _id: this.currentRaceEvent.generateJSON()._id };
 		const options = {
 			method: "POST",

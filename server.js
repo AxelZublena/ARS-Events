@@ -169,11 +169,13 @@ app.post("/newRaceEvent", (request, response) => {
 		response.json(id);
 	});
 });
+// Is never called
 app.post("/update", (request, response) => {
 	const data = request.body;
 
 	const id = data._id;
 	delete data._id;
+    console.log(id);
 
 	raceEvents.update({ _id: id }, data, {}, async (err, numReplaced) => {
 		if (err) {
@@ -184,6 +186,10 @@ app.post("/update", (request, response) => {
 		console.log("Entry updated.");
 		response.json({ success: "true" });
 	});
+
+    raceEvents.findOne({ _id: id }, (err, doc) => {
+        console.log(doc);
+    });
 });
 app.post("/remove", (request, response) => {
 	const id = request.body._id;

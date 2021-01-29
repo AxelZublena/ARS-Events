@@ -134,6 +134,7 @@ class RaceEvent {
 	}
 
 	public getDate(): string {
+        console.log(this.date);
 		return this.date.toISOString().slice(0, 16);
 	}
 

@@ -10,10 +10,10 @@ class Display {
 		this.eventContent = document.querySelector(".app-main");
 		this.eventList = document.querySelector(".event-container");
 
+		this.initDOM = this.createInitDOM();
 	}
 
 	public update(currentRaceEvent: RaceEvent, raceEvents: RaceEvent[]) {
-		this.initDOM = this.createInitDOM();
 
 		this.eventContent.append(this.initDOM);
 		this.raceEvent = currentRaceEvent;
