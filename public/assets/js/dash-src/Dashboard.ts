@@ -46,14 +46,19 @@ class Dashboard {
                 this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
                 this.display.update(this.currentRaceEvent, this.raceEvents);
                 console.log(this.raceEvents);
+
+
+                const saveButton = document.getElementById("save-btn");
+                saveButton.addEventListener("click", () => this.saveToDB());
+
+                console.log("test " + this.currentRaceEvent.getId());
+
+                // event listener doesn't update the value
+                const deleteButton = document.getElementById("delete-btn");
+                deleteButton.addEventListener("click", () => this.removeFromDB());
+                //deleteButton.addEventListener("click", () => console.log("raceEvent to delete: " + this.currentRaceEvent.getId()));
             });
 
-		const saveButton = document.getElementById("save-btn");
-		saveButton.addEventListener("click", () => this.saveToDB());
-
-		const deleteButton = document.getElementById("delete-btn");
-		//deleteButton.addEventListener("click", () => this.removeFromDB());
-		deleteButton.addEventListener("click", () => console.log("raceEvent to delete: " + this.currentRaceEvent.getId()));
 	}
 
 	private newEvent(): void {
@@ -104,7 +109,6 @@ class Dashboard {
 				info
 			)
 		);
-
 		this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
 
 		this.display.update(this.currentRaceEvent, this.raceEvents);
@@ -125,22 +129,25 @@ class Dashboard {
 		const response = await fetch("/update", options);
 		const json = await response.json();
 		console.log("saved: " + json);
+		this.display.updateEventList(this.raceEvents);
 	}
 
 	// remove a raceEvent in db (by calling the server)
 	private async removeFromDB() {
-        //Doesn't remove the right raceEvent
-        //console.log(this.currentRaceEvent);
-		const data = { _id: this.currentRaceEvent.generateJSON()._id };
-		const options = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify(data)
-		};
-		const response = await fetch("/remove", options);
-		const json = await response.json();
-		console.log(json);
+        this.currentRaceEvent = this.display.getCurrentRaceEvent();
+
+        console.log("event to delete: " + this.currentRaceEvent.getId());
+        const data = { _id: this.currentRaceEvent.generateJSON()._id };
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        };
+        const response = await fetch("/remove", options);
+        const json = await response.json();
+        console.log(json);
+		this.display.updateEventList(this.raceEvents);
 	}
 }

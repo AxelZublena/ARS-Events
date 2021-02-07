@@ -26,11 +26,12 @@ class Dashboard {
             this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
             this.display.update(this.currentRaceEvent, this.raceEvents);
             console.log(this.raceEvents);
+            const saveButton = document.getElementById("save-btn");
+            saveButton.addEventListener("click", () => this.saveToDB());
+            console.log("test " + this.currentRaceEvent.getId());
+            const deleteButton = document.getElementById("delete-btn");
+            deleteButton.addEventListener("click", () => this.removeFromDB());
         });
-        const saveButton = document.getElementById("save-btn");
-        saveButton.addEventListener("click", () => this.saveToDB());
-        const deleteButton = document.getElementById("delete-btn");
-        deleteButton.addEventListener("click", () => console.log("raceEvent to delete: " + this.currentRaceEvent.getId()));
     }
     newEvent() {
         const tracks = [
@@ -78,10 +79,13 @@ class Dashboard {
             const response = yield fetch("/update", options);
             const json = yield response.json();
             console.log("saved: " + json);
+            this.display.updateEventList(this.raceEvents);
         });
     }
     removeFromDB() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.currentRaceEvent = this.display.getCurrentRaceEvent();
+            console.log("event to delete: " + this.currentRaceEvent.getId());
             const data = { _id: this.currentRaceEvent.generateJSON()._id };
             const options = {
                 method: "POST",
@@ -93,6 +97,7 @@ class Dashboard {
             const response = yield fetch("/remove", options);
             const json = yield response.json();
             console.log(json);
+            this.display.updateEventList(this.raceEvents);
         });
     }
 }
@@ -121,14 +126,16 @@ class Display {
         participantMaxInput.addEventListener("change", () => this.changeParticipantMax());
         const infoInput = document.getElementById("textInfo");
         infoInput.addEventListener("change", () => this.changeInfo());
-        this.updateDate();
-        this.updateParticipantMax();
-        this.updateInfo();
-        this.updateTracks();
-        this.updateCars();
-        this.updateImgs();
-        this.updateParticipant();
-        this.updateEventList(raceEvents);
+        if (raceEvents.length > 0 || this.raceEvent !== undefined) {
+            this.updateDate();
+            this.updateParticipantMax();
+            this.updateInfo();
+            this.updateTracks();
+            this.updateCars();
+            this.updateImgs();
+            this.updateParticipant();
+            this.updateEventList(raceEvents);
+        }
     }
     uploadTrackImg(event) {
         const files = event.target.files;
@@ -359,6 +366,9 @@ class Display {
     addParticipant() {
         this.raceEvent.addParticipant(document.getElementById("playerName").value);
         this.updateParticipant();
+    }
+    getCurrentRaceEvent() {
+        return this.raceEvent;
     }
     createInitDOM() {
         const title = document.querySelector(".dashboard-title");
@@ -596,7 +606,6 @@ class RaceEvent {
         return this.id;
     }
     getDate() {
-        console.log(this.date);
         return this.date.toISOString().slice(0, 16);
     }
     getParticipantMax() {

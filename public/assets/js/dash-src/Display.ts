@@ -43,14 +43,17 @@ class Display {
         infoInput.addEventListener("change", () => this.changeInfo());
 
 
-		this.updateDate();
-		this.updateParticipantMax();
-		this.updateInfo();
-		this.updateTracks();
-		this.updateCars();
-		this.updateImgs();
-		this.updateParticipant();
-		this.updateEventList(raceEvents);
+        // TODO: everything is broken
+        if(raceEvents.length > 0 || this.raceEvent !== undefined){
+            this.updateDate();
+            this.updateParticipantMax();
+            this.updateInfo();
+            this.updateTracks();
+            this.updateCars();
+            this.updateImgs();
+            this.updateParticipant();
+            this.updateEventList(raceEvents);
+        }
 	}
 
 	public uploadTrackImg(event: Event) {
@@ -331,6 +334,10 @@ class Display {
 		);
 		this.updateParticipant();
 	}
+
+    public getCurrentRaceEvent(): RaceEvent {
+        return this.raceEvent;
+    }
 
 	private createInitDOM(): HTMLElement {
         const title = document.querySelector(".dashboard-title");
