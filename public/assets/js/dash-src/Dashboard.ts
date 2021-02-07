@@ -148,6 +148,12 @@ class Dashboard {
         const response = await fetch("/remove", options);
         const json = await response.json();
         console.log(json);
-		this.display.updateEventList(this.raceEvents);
+
+        console.log(this.raceEvents.indexOf(this.currentRaceEvent));
+        this.raceEvents.splice(this.raceEvents.indexOf(this.currentRaceEvent), 1);
+        console.log(this.raceEvents);
+        this.currentRaceEvent = this.raceEvents[0];
+        this.display.update(this.currentRaceEvent, this.raceEvents);
+		//this.display.updateEventList(this.raceEvents);
 	}
 }
