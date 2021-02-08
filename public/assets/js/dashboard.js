@@ -194,7 +194,12 @@ class Display {
             const main = document.createElement("div");
             main.className = "event-main-img";
             const blur = document.createElement("div");
-            blur.className = "blur";
+            if (raceEvent === this.raceEvent) {
+                blur.className = "blur event-img-selected";
+            }
+            else {
+                blur.className = "blur";
+            }
             const date = document.createElement("p");
             date.className = "event-img-date";
             date.innerText = raceEvent.getDate();

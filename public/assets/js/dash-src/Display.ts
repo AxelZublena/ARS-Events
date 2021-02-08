@@ -43,7 +43,6 @@ class Display {
         infoInput.addEventListener("change", () => this.changeInfo());
 
 
-        // TODO: everything is broken
         if(raceEvents.length > 0 || this.raceEvent !== undefined){
             this.updateDate();
             this.updateParticipantMax();
@@ -114,12 +113,19 @@ class Display {
 			const main = document.createElement("div");
 			main.className = "event-main-img";
 
+
 			const blur = document.createElement("div");
-			blur.className = "blur";
+            if(raceEvent === this.raceEvent){
+                blur.className = "blur event-img-selected";
+            }
+            else{
+                blur.className = "blur";
+            }
 
 			const date = document.createElement("p");
 			date.className = "event-img-date";
 			date.innerText = raceEvent.getDate();
+
 
 			blur.append(date);
 			main.append(blur);
@@ -132,6 +138,7 @@ class Display {
                 console.log(raceEvent.getId())
                 this.update(this.raceEvent, raceEvents)
             });
+
 		});
 	}
 
