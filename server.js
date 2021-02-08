@@ -11,7 +11,8 @@ const { request } = require("http");
 const fileUpload = require("express-fileupload");
 
 const app = express();
-app.listen(3000, () => console.log("Server listening..."));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log("Server listening on " + PORT + "..."));
 app.use(express.static("public"));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
