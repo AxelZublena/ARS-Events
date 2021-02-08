@@ -99,7 +99,7 @@ app.post("/login", (request, response) => {
 				if (passwordMatch) {
 					console.log("You are now logged in");
 					request.session.user = request.body.username;
-					return response.redirect("/dashboard");
+					return response.redirect("/admin");
 				} else {
 					console.log("Wrong password");
 					return response.redirect("./login.html");
