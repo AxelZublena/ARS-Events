@@ -14,17 +14,16 @@ class Display {
 	}
 
 	public update(currentRaceEvent: RaceEvent, raceEvents: RaceEvent[]) {
-
 		this.eventContent.append(this.initDOM);
 		this.raceEvent = currentRaceEvent;
 
-        const trackButton = document.getElementById("addTrackButton"); 
+		const trackButton = document.getElementById("addTrackButton");
 		trackButton.addEventListener("click", () => this.addTrack());
 
-        const carButton = document.getElementById("addCarButton"); 
+		const carButton = document.getElementById("addCarButton");
 		carButton.addEventListener("click", () => this.addCar());
 
-        const participantButton = document.getElementById("addParticipantButton");
+		const participantButton = document.getElementById("addParticipantButton");
 		participantButton.addEventListener("click", () => this.addParticipant());
 
 		const trackImg = <HTMLInputElement>document.getElementById("trackImg");
@@ -34,25 +33,24 @@ class Display {
 		carImg.addEventListener("change", (event) => this.uploadCarImg(event));
 
 		const dateInput = <HTMLInputElement>document.getElementById("dateInput");
-        dateInput.addEventListener("change", () => this.changeDate()); 
+		dateInput.addEventListener("change", () => this.changeDate());
 
-		const participantMaxInput= <HTMLInputElement>document.getElementById("participantInput");
-        participantMaxInput.addEventListener("change", () => this.changeParticipantMax()); 
+		const participantMaxInput = <HTMLInputElement>document.getElementById("participantInput");
+		participantMaxInput.addEventListener("change", () => this.changeParticipantMax());
 
 		const infoInput = <HTMLTextAreaElement>document.getElementById("textInfo");
-        infoInput.addEventListener("change", () => this.changeInfo());
+		infoInput.addEventListener("change", () => this.changeInfo());
 
-
-        if(raceEvents.length > 0 || this.raceEvent !== undefined){
-            this.updateDate();
-            this.updateParticipantMax();
-            this.updateInfo();
-            this.updateTracks();
-            this.updateCars();
-            this.updateImgs();
-            this.updateParticipant();
-            this.updateEventList(raceEvents);
-        }
+		if (raceEvents.length > 0 || this.raceEvent !== undefined) {
+			this.updateDate();
+			this.updateParticipantMax();
+			this.updateInfo();
+			this.updateTracks();
+			this.updateCars();
+			this.updateImgs();
+			this.updateParticipant();
+			this.updateEventList(raceEvents);
+		}
 	}
 
 	public uploadTrackImg(event: Event) {
@@ -69,8 +67,8 @@ class Display {
 			.then((response) => response.json())
 			.then((data) => {
 				console.log(data);
-                this.raceEvent.setTrackImg("/assets/events-img/"+data.name);
-                this.updateImgs();
+				this.raceEvent.setTrackImg("/assets/events-img/" + data.name);
+				this.updateImgs();
 			})
 			.catch((error) => {
 				console.error(error);
@@ -91,8 +89,8 @@ class Display {
 			.then((response) => response.json())
 			.then((data) => {
 				console.log(data);
-                this.raceEvent.setCarImg("/assets/events-img/"+data.name);
-                this.updateImgs();
+				this.raceEvent.setCarImg("/assets/events-img/" + data.name);
+				this.updateImgs();
 			})
 			.catch((error) => {
 				console.error(error);
@@ -113,32 +111,29 @@ class Display {
 			const main = document.createElement("div");
 			main.className = "event-main-img";
 
-
 			const blur = document.createElement("div");
-            if(raceEvent === this.raceEvent){
-                blur.className = "blur event-img-selected";
-            }
-            else{
-                blur.className = "blur";
-            }
+			if (raceEvent === this.raceEvent) {
+				blur.className = "blur event-img-selected";
+			} else {
+				blur.className = "blur";
+			}
 
 			const date = document.createElement("p");
 			date.className = "event-img-date";
 			date.innerText = raceEvent.getDate();
 
-
 			blur.append(date);
 			main.append(blur);
 			container.append(main);
 
-            // Add event listener
-            main.addEventListener("click", () => {
-                // Does not really work
-                this.raceEvent = raceEvent;
-                console.log(raceEvent.getId())
-                this.update(this.raceEvent, raceEvents)
-            });
-
+			// Add event listener
+			main.addEventListener("click", () => {
+				// Does not really work
+				this.raceEvent = raceEvent;
+				console.log(raceEvent.getId());
+				this.update(this.raceEvent, raceEvents);
+                document.getElementById("save-btn").style.backgroundColor = "dodgerblue";
+			});
 		});
 	}
 
@@ -149,34 +144,33 @@ class Display {
 	private updateParticipantMax() {
 		const field = <HTMLInputElement>document.getElementById("participantInput");
 		field.value = this.raceEvent.getParticipantMax().toString();
-        this.updateParticipant();
+		this.updateParticipant();
 	}
 	private updateInfo() {
 		const field = <HTMLTextAreaElement>document.getElementById("textInfo");
 		field.value = this.raceEvent.getInfo();
 	}
 
-    private changeDate(){
+	private changeDate() {
 		const field = <HTMLInputElement>document.getElementById("dateInput");
-        this.raceEvent.setDate(new Date(field.value));
-    }
+		this.raceEvent.setDate(new Date(field.value));
+	}
 	private changeParticipantMax() {
 		const field = <HTMLInputElement>document.getElementById("participantInput");
-        const number = parseInt(field.value);
-        if(number > this.raceEvent.getParticipants().length){
-            this.raceEvent.setParticipantMax(number);
-        }
-        else{
-            this.raceEvent.setParticipantMax(this.raceEvent.getParticipants().length);
-        }
+		const number = parseInt(field.value);
+		if (number > this.raceEvent.getParticipants().length) {
+			this.raceEvent.setParticipantMax(number);
+		} else {
+			this.raceEvent.setParticipantMax(this.raceEvent.getParticipants().length);
+		}
 
-        this.updateParticipantMax();
+		this.updateParticipantMax();
 	}
 	private changeInfo() {
 		const field = <HTMLTextAreaElement>document.getElementById("textInfo");
-        this.raceEvent.setInfo(field.value);
+		this.raceEvent.setInfo(field.value);
 
-        this.raceEvent.generateJSON();
+		this.raceEvent.generateJSON();
 	}
 
 	private updateTracks() {
@@ -208,6 +202,7 @@ class Display {
 			container.append(item);
 		});
 	}
+
 	private updateCars() {
 		const container = document.getElementById("car-text").children[1];
 		container.innerHTML = "";
@@ -300,7 +295,11 @@ class Display {
 			container.append(item);
 		});
 
-		for (let i = 0; i < this.raceEvent.getParticipantMax()-this.raceEvent.getParticipants().length; i++) {
+		for (
+			let i = 0;
+			i < this.raceEvent.getParticipantMax() - this.raceEvent.getParticipants().length;
+			i++
+		) {
 			const item = document.createElement("div");
 			item.className = "item empty-place";
 
@@ -318,8 +317,6 @@ class Display {
 			container.append(item);
 		}
 	}
-
-    
 
 	private addTrack() {
 		this.raceEvent.addTrack({
@@ -342,17 +339,16 @@ class Display {
 		this.updateParticipant();
 	}
 
-    public getCurrentRaceEvent(): RaceEvent {
-        return this.raceEvent;
-    }
+	public getCurrentRaceEvent(): RaceEvent {
+		return this.raceEvent;
+	}
 
 	private createInitDOM(): HTMLElement {
-        const title = document.querySelector(".dashboard-title");
-        title.innerHTML = 
-            `<div id="save-del">
+		const title = document.querySelector(".dashboard-title");
+		title.innerHTML = `<div id="save-del">
                 <h2 id="save-btn">Enregistrer</h2>
                 <h2 id="delete-btn">Supprimer</h2>
-            </div>`
+            </div>`;
 
 		const html = document.createElement("div");
 		html.className = "event";

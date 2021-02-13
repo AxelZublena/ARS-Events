@@ -3,6 +3,8 @@ class Dashboard {
 	private currentRaceEvent: RaceEvent;
 
 	private display: Display;
+    
+    private saveButton: HTMLElement;
 
 	public constructor() {
 		console.log("App is ready");
@@ -10,10 +12,6 @@ class Dashboard {
 		this.display = new Display();
 
 		this.raceEvents = [];
-		//for(let i = 0; i < 6; i++){
-		//this.raceEvents.push(new RaceEvent());
-		//}
-		//this.raceEvents.push(new RaceEvent());
 
 		// New event button
 		const newEventButton = document.getElementById("newEvent");
@@ -48,8 +46,11 @@ class Dashboard {
                 console.log(this.raceEvents);
 
 
-                const saveButton = document.getElementById("save-btn");
-                saveButton.addEventListener("click", () => this.saveToDB());
+                this.saveButton = document.getElementById("save-btn");
+                this.saveButton.addEventListener("click", () => {
+                    this.saveToDB()
+                    this.saveButton.style.backgroundColor = "grey";
+                });
 
                 console.log("test " + this.currentRaceEvent.getId());
 
@@ -113,6 +114,8 @@ class Dashboard {
 
 		this.display.update(this.currentRaceEvent, this.raceEvents);
 
+
+        this.saveButton.style.backgroundColor = "dodgerblue";
 	}
 
 	// insert a new raceEvent in db (by calling the server)
@@ -154,6 +157,9 @@ class Dashboard {
         console.log(this.raceEvents);
         this.currentRaceEvent = this.raceEvents[0];
         this.display.update(this.currentRaceEvent, this.raceEvents);
-		//this.display.updateEventList(this.raceEvents);
 	}
+
+    public getSaveButton(){
+        return this.saveButton;
+    }
 }

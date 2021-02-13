@@ -26,8 +26,11 @@ class Dashboard {
             this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
             this.display.update(this.currentRaceEvent, this.raceEvents);
             console.log(this.raceEvents);
-            const saveButton = document.getElementById("save-btn");
-            saveButton.addEventListener("click", () => this.saveToDB());
+            this.saveButton = document.getElementById("save-btn");
+            this.saveButton.addEventListener("click", () => {
+                this.saveToDB();
+                this.saveButton.style.backgroundColor = "grey";
+            });
             console.log("test " + this.currentRaceEvent.getId());
             const deleteButton = document.getElementById("delete-btn");
             deleteButton.addEventListener("click", () => this.removeFromDB());
@@ -64,6 +67,7 @@ class Dashboard {
         this.raceEvents.push(new RaceEvent(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info));
         this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
         this.display.update(this.currentRaceEvent, this.raceEvents);
+        this.saveButton.style.backgroundColor = "dodgerblue";
     }
     saveToDB() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -103,6 +107,9 @@ class Dashboard {
             this.currentRaceEvent = this.raceEvents[0];
             this.display.update(this.currentRaceEvent, this.raceEvents);
         });
+    }
+    getSaveButton() {
+        return this.saveButton;
     }
 }
 class Display {
@@ -210,6 +217,7 @@ class Display {
                 this.raceEvent = raceEvent;
                 console.log(raceEvent.getId());
                 this.update(this.raceEvent, raceEvents);
+                document.getElementById("save-btn").style.backgroundColor = "dodgerblue";
             });
         });
     }
@@ -381,8 +389,7 @@ class Display {
     }
     createInitDOM() {
         const title = document.querySelector(".dashboard-title");
-        title.innerHTML =
-            `<div id="save-del">
+        title.innerHTML = `<div id="save-del">
                 <h2 id="save-btn">Enregistrer</h2>
                 <h2 id="delete-btn">Supprimer</h2>
             </div>`;
