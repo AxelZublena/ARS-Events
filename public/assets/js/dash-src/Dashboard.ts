@@ -32,16 +32,15 @@ class Dashboard {
                             raceEvent.participants,
                             raceEvent.maxParticipants,
                             new Date(raceEvent.date),
-                            raceEvent.eventImg,
+                            raceEvent.carImg,
                             raceEvent.info,
                             raceEvent._id
                         )
                     );
                 });
-                //this.raceEvents = json.array;
-                //this.display.updateEventList(this.raceEvents);
+                this.raceEvents.sort((a,b) => b.getDateObject().getTime() - a.getDateObject().getTime());
+                this.currentRaceEvent = this.raceEvents[0];
                 console.log(this.currentRaceEvent);
-                this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
                 this.display.update(this.currentRaceEvent, this.raceEvents);
                 console.log(this.raceEvents);
 
@@ -49,7 +48,6 @@ class Dashboard {
                 this.saveButton = document.getElementById("save-btn");
                 this.saveButton.addEventListener("click", () => {
                     this.saveToDB()
-                    this.saveButton.style.backgroundColor = "grey";
                 });
 
                 console.log("test " + this.currentRaceEvent.getId());
@@ -96,8 +94,7 @@ class Dashboard {
 		const info =
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
 
-        // TODO: Wrong ids
-		this.raceEvents.push(
+		this.raceEvents.unshift(
 			new RaceEvent(
 				tracks,
 				cars,
@@ -131,7 +128,13 @@ class Dashboard {
 		};
 		const response = await fetch("/update", options);
 		const json = await response.json();
-		console.log("saved: " + json);
+		console.log(json);
+
+        if(json.success === "true"){
+            this.saveButton.style.backgroundColor = "grey";
+        }
+
+        this.raceEvents.sort((a,b) => b.getDateObject().getTime() - a.getDateObject().getTime());
 		this.display.updateEventList(this.raceEvents);
 	}
 
@@ -152,11 +155,12 @@ class Dashboard {
         const json = await response.json();
         console.log(json);
 
-        console.log(this.raceEvents.indexOf(this.currentRaceEvent));
         this.raceEvents.splice(this.raceEvents.indexOf(this.currentRaceEvent), 1);
-        console.log(this.raceEvents);
+        this.raceEvents.sort((a,b) => b.getDateObject().getTime() - a.getDateObject().getTime());
         this.currentRaceEvent = this.raceEvents[0];
         this.display.update(this.currentRaceEvent, this.raceEvents);
+
+        console.log(this.raceEvents);
 	}
 
     public getSaveButton(){

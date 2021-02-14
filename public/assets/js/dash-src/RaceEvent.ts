@@ -81,6 +81,9 @@ class RaceEvent {
 	public setCarImg(src: string) {
 		this.carImg = src;
 	}
+    public setEventImg(src: string) {
+        this.eventImg = src;
+    }
 
 	public removeTrack(name: string) {
 		this.tracks = this.tracks.filter((track) => track.name !== name);
@@ -136,6 +139,9 @@ class RaceEvent {
 	public getDate(): string {
 		return this.date.toISOString().slice(0, 16);
 	}
+    public getDateObject(): Date {
+        return this.date;
+    }
 
 	public getParticipantMax(): number {
 		return this.maxParticipants;
@@ -159,6 +165,9 @@ class RaceEvent {
 	public getCarImg(): string {
 		return this.carImg;
 	}
+    public getEventImg():string {
+        return this.eventImg;
+    }
 
 	public getParticipants(): string[] {
 		return this.participants;

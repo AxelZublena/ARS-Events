@@ -110,6 +110,8 @@ class Display {
 		raceEvents.forEach((raceEvent) => {
 			const main = document.createElement("div");
 			main.className = "event-main-img";
+            //main.style.backgroundImage = "url(" + raceEvent.getCarImg();
+            main.style.backgroundImage = "url(" + raceEvent.getEventImg();
 
 			const blur = document.createElement("div");
 			if (raceEvent === this.raceEvent) {
@@ -128,7 +130,6 @@ class Display {
 
 			// Add event listener
 			main.addEventListener("click", () => {
-				// Does not really work
 				this.raceEvent = raceEvent;
 				console.log(raceEvent.getId());
 				this.update(this.raceEvent, raceEvents);

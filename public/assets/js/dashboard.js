@@ -20,16 +20,16 @@ class Dashboard {
         })
             .then((json) => {
             json.array.forEach((raceEvent) => {
-                this.raceEvents.push(new RaceEvent(raceEvent.tracks, raceEvent.cars, raceEvent.trackImg, raceEvent.carImg, raceEvent.participants, raceEvent.maxParticipants, new Date(raceEvent.date), raceEvent.eventImg, raceEvent.info, raceEvent._id));
+                this.raceEvents.push(new RaceEvent(raceEvent.tracks, raceEvent.cars, raceEvent.trackImg, raceEvent.carImg, raceEvent.participants, raceEvent.maxParticipants, new Date(raceEvent.date), raceEvent.carImg, raceEvent.info, raceEvent._id));
             });
+            this.raceEvents.sort((a, b) => b.getDateObject().getTime() - a.getDateObject().getTime());
+            this.currentRaceEvent = this.raceEvents[0];
             console.log(this.currentRaceEvent);
-            this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
             this.display.update(this.currentRaceEvent, this.raceEvents);
             console.log(this.raceEvents);
             this.saveButton = document.getElementById("save-btn");
             this.saveButton.addEventListener("click", () => {
                 this.saveToDB();
-                this.saveButton.style.backgroundColor = "grey";
             });
             console.log("test " + this.currentRaceEvent.getId());
             const deleteButton = document.getElementById("delete-btn");
@@ -64,7 +64,7 @@ class Dashboard {
         const date = new Date();
         const eventImg = "/assets/img/rf2.jpg";
         const info = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
-        this.raceEvents.push(new RaceEvent(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info));
+        this.raceEvents.unshift(new RaceEvent(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info));
         this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
         this.display.update(this.currentRaceEvent, this.raceEvents);
         this.saveButton.style.backgroundColor = "dodgerblue";
@@ -82,7 +82,11 @@ class Dashboard {
             };
             const response = yield fetch("/update", options);
             const json = yield response.json();
-            console.log("saved: " + json);
+            console.log(json);
+            if (json.success === "true") {
+                this.saveButton.style.backgroundColor = "grey";
+            }
+            this.raceEvents.sort((a, b) => b.getDateObject().getTime() - a.getDateObject().getTime());
             this.display.updateEventList(this.raceEvents);
         });
     }
@@ -101,11 +105,11 @@ class Dashboard {
             const response = yield fetch("/remove", options);
             const json = yield response.json();
             console.log(json);
-            console.log(this.raceEvents.indexOf(this.currentRaceEvent));
             this.raceEvents.splice(this.raceEvents.indexOf(this.currentRaceEvent), 1);
-            console.log(this.raceEvents);
+            this.raceEvents.sort((a, b) => b.getDateObject().getTime() - a.getDateObject().getTime());
             this.currentRaceEvent = this.raceEvents[0];
             this.display.update(this.currentRaceEvent, this.raceEvents);
+            console.log(this.raceEvents);
         });
     }
     getSaveButton() {
@@ -200,6 +204,7 @@ class Display {
         raceEvents.forEach((raceEvent) => {
             const main = document.createElement("div");
             main.className = "event-main-img";
+            main.style.backgroundImage = "url(" + raceEvent.getEventImg();
             const blur = document.createElement("div");
             if (raceEvent === this.raceEvent) {
                 blur.className = "blur event-img-selected";
@@ -573,6 +578,9 @@ class RaceEvent {
     setCarImg(src) {
         this.carImg = src;
     }
+    setEventImg(src) {
+        this.eventImg = src;
+    }
     removeTrack(name) {
         this.tracks = this.tracks.filter((track) => track.name !== name);
     }
@@ -624,6 +632,9 @@ class RaceEvent {
     getDate() {
         return this.date.toISOString().slice(0, 16);
     }
+    getDateObject() {
+        return this.date;
+    }
     getParticipantMax() {
         return this.maxParticipants;
     }
@@ -641,6 +652,9 @@ class RaceEvent {
     }
     getCarImg() {
         return this.carImg;
+    }
+    getEventImg() {
+        return this.eventImg;
     }
     getParticipants() {
         return this.participants;
