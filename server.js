@@ -10,6 +10,9 @@ const { request } = require("http");
 
 const fileUpload = require("express-fileupload");
 
+// file manipulation
+const fs = require('fs');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log("Server listening on " + PORT + "..."));
@@ -25,10 +28,56 @@ app.use(
 );
 app.use(fileUpload());
 
-const users = new Datastore("./databases/users.db");
-const raceEvents = new Datastore("./databases/raceEvents.db");
-users.loadDatabase();
-raceEvents.loadDatabase();
+
+// First time load
+let users;
+let raceEvents;
+app.get("/firstTime", (request, response) => {
+    if(fs.existsSync("./databases/users.db")){
+        users = new Datastore("./databases/users.db");
+        users.loadDatabase();
+
+        raceEvents = new Datastore("./databases/raceEvents.db");
+        raceEvents.loadDatabase();
+    }
+    else{
+        console.log("First time loading, will setup the admin account.");
+        response.json({
+            status: "success",
+            value: true
+        });
+
+        raceEvents = new Datastore("./databases/raceEvents.db");
+        raceEvents.loadDatabase();
+    }
+    return;
+});
+app.get("/firstTimeSetup", (request, response) => {
+    // 2x security (need to start somewhere)
+    if(!fs.existsSync("./databases/users.db")){
+        console.log("the f");
+        return response.sendFile(path.join(__dirname + "/firstTimeSetup.html"));
+    }
+});
+
+app.post("/setCredentials", async (request, response) => {
+    users = new Datastore("./databases/users.db");
+    users.loadDatabase();
+
+
+    const hashPassword = await bcrypt.hash(request.body.password, 10);
+    console.log("password: ", hashPassword);
+    const newUser = {
+        username: request.body.username,
+        password: hashPassword
+    };
+
+    users.insert(newUser);
+    console.log("Registered user:", request.body.username);
+    return response.redirect("/");
+});
+
+
 
 // Load the dashboard if there is a session
 app.get("/dashboard", (request, response) => {
@@ -55,6 +104,7 @@ app.get("/login", (request, response) => {
 	}
 	return response.sendFile(path.join(__dirname + "/public/login.html"));
 });
+
 
 //// Handle registration form
 //app.post("/register", async (request, response) => {
@@ -94,6 +144,7 @@ app.post("/login", (request, response) => {
 				return 0;
 			}
 
+            console.log(request.body.password);
 			if (Object.keys(data).length > 0) {
 				const passwordMatch = await bcrypt.compare(request.body.password, data[0].password);
 
@@ -107,7 +158,7 @@ app.post("/login", (request, response) => {
 				}
 			} else {
 				console.log("You don't have an account");
-				return response.redirect("./login.html");
+				return response.redirect("/login");
 			}
 		});
 	} catch {
