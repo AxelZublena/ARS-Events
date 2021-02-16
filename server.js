@@ -41,7 +41,7 @@ app.get("/firstTime", (request, response) => {
         raceEvents.loadDatabase();
     }
     else{
-        console.log("First time loading, will setup the admin account.");
+        console.log("First time loading, need to setup the admin account. User redirected.");
         response.json({
             status: "success",
             value: true
@@ -55,7 +55,6 @@ app.get("/firstTime", (request, response) => {
 app.get("/firstTimeSetup", (request, response) => {
     // 2x security (need to start somewhere)
     if(!fs.existsSync("./databases/users.db")){
-        console.log("the f");
         return response.sendFile(path.join(__dirname + "/firstTimeSetup.html"));
     }
 });
@@ -66,7 +65,6 @@ app.post("/setCredentials", async (request, response) => {
 
 
     const hashPassword = await bcrypt.hash(request.body.password, 10);
-    console.log("password: ", hashPassword);
     const newUser = {
         username: request.body.username,
         password: hashPassword
@@ -82,8 +80,9 @@ app.post("/setCredentials", async (request, response) => {
 // Load the dashboard if there is a session
 app.get("/dashboard", (request, response) => {
 	if (!request.session.user) {
-		return response.sendFile(path.join(__dirname + "/public/login.html"));
+		//return response.sendFile(path.join(__dirname + "/public/login.html"));
 		//return response.status(401).send();
+        return response.redirect("/login");
 	}
 	return response.sendFile(path.join(__dirname + "/dashboard.html"));
 });
@@ -91,7 +90,8 @@ app.get("/dashboard", (request, response) => {
 app.get("/admin", (request, response) => {
 	if (!request.session.user) {
 		//return response.status(401).send();
-		return response.sendFile(path.join(__dirname + "/public/login.html"));
+		//return response.sendFile(path.join(__dirname + "/public/login.html"));
+        return response.redirect("/login");
 	}
 	return response.sendFile(path.join(__dirname + "/admin.html"));
 });
@@ -99,12 +99,57 @@ app.get("/admin", (request, response) => {
 // Load the login page
 app.get("/login", (request, response) => {
 	if (request.session.user) {
-		//return response.status(401).send();
-		return response.sendFile(path.join(__dirname + "/dashboard.html"));
+        return response.redirect("/dashboard");
 	}
 	return response.sendFile(path.join(__dirname + "/public/login.html"));
 });
+// Load the login page informing user of a wrong password
+app.get("/loginErrPass", (request, response) => {
+	if (request.session.user) {
+        return response.redirect("/dashboard");
+	}
+	return response.sendFile(path.join(__dirname + "/public/loginErrPass.html"));
+});
+// Load the login page informing the user of a wrong account
+app.get("/loginErrAcc", (request, response) => {
+	if (request.session.user) {
+        return response.redirect("/dashboard");
+	}
+	return response.sendFile(path.join(__dirname + "/public/loginErrAcc.html"));
+});
 
+
+// Handle login form
+app.post("/login", (request, response) => {
+	try {
+		users.find({ username: request.body.username }, async (error, data) => {
+			if (error) {
+				response.end();
+				return 0;
+			}
+
+			if (Object.keys(data).length > 0) {
+				const passwordMatch = await bcrypt.compare(request.body.password, data[0].password);
+
+				if (passwordMatch) {
+					console.log("You are now logged in");
+					request.session.user = request.body.username;
+					return response.redirect("/admin");
+				} else {
+					console.log("Wrong password");
+					//return response.redirect("./login.html");
+                    return response.redirect("/loginErrPass");
+				}
+			} else {
+				console.log("You don't have an account");
+                //return response.send("no account");
+				return response.redirect("/loginErrAcc");
+			}
+		});
+	} catch {
+		return response.send("Internal server error");
+	}
+});
 
 //// Handle registration form
 //app.post("/register", async (request, response) => {
@@ -134,38 +179,6 @@ app.get("/login", (request, response) => {
 		//return response.send("Internal server error");
 	//}
 //});
-
-// Handle login form
-app.post("/login", (request, response) => {
-	try {
-		users.find({ username: request.body.username }, async (error, data) => {
-			if (error) {
-				response.end();
-				return 0;
-			}
-
-            console.log(request.body.password);
-			if (Object.keys(data).length > 0) {
-				const passwordMatch = await bcrypt.compare(request.body.password, data[0].password);
-
-				if (passwordMatch) {
-					console.log("You are now logged in");
-					request.session.user = request.body.username;
-					return response.redirect("/admin");
-				} else {
-					console.log("Wrong password");
-					return response.redirect("./login.html");
-				}
-			} else {
-				console.log("You don't have an account");
-				return response.redirect("/login");
-			}
-		});
-	} catch {
-		return response.send("Internal server error");
-	}
-});
-
 // Image upload
 const imgPath = __dirname + "/public/assets/events-img/";
 app.post("/store-img", (request, response) => {

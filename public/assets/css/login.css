@@ -2,13 +2,10 @@
     margin-left: -18vw;
 }
 
+
 .tile{
-    position: absolute;
     background-color: white;
     border-radius: 20px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(1.5);
     padding: 2vw;
 }
 
@@ -22,6 +19,7 @@
     border-color: black;
     padding: 5px;
     margin-top: 5px;
+    min-width: 100%;
 }
 .tile button{
     border-radius: 15px;
@@ -35,4 +33,21 @@
 .tile button:hover{
     cursor: pointer;
     background-color: #ff2f3b;
+}
+
+#content {
+    position: absolute;
+    display: grid;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.5);
+    width: 20%;
+}
+
+#information {
+    background-color: brown;
+    border-radius: 20px;
+    padding: 2vw;
+    color: white;
+    margin-bottom: 2vw;
 }
