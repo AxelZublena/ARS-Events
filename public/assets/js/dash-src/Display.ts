@@ -18,28 +18,52 @@ class Display {
 		this.raceEvent = currentRaceEvent;
 
 		const trackButton = document.getElementById("addTrackButton");
-		trackButton.addEventListener("click", () => this.addTrack());
+		trackButton.addEventListener("click", () => {
+            this.addTrack();
+            this.updateSaveButtonColor("dodgerblue");
+        } );
 
 		const carButton = document.getElementById("addCarButton");
-		carButton.addEventListener("click", () => this.addCar());
+		carButton.addEventListener("click", () => {
+            this.addCar();
+            this.updateSaveButtonColor("dodgerblue");
+        });
 
 		const participantButton = document.getElementById("addParticipantButton");
-		participantButton.addEventListener("click", () => this.addParticipant());
+		participantButton.addEventListener("click", () => {
+            this.addParticipant();
+            this.updateSaveButtonColor("dodgerblue");
+        });
 
 		const trackImg = <HTMLInputElement>document.getElementById("trackImg");
-		trackImg.addEventListener("change", (event) => this.uploadTrackImg(event));
+		trackImg.addEventListener("change", (event) => {
+            this.uploadTrackImg(event);
+            this.updateSaveButtonColor("dodgerblue");
+        });
 
 		const carImg = <HTMLInputElement>document.getElementById("carImg");
-		carImg.addEventListener("change", (event) => this.uploadCarImg(event));
+		carImg.addEventListener("change", (event) => {
+            this.uploadCarImg(event);
+            this.updateSaveButtonColor("dodgerblue");
+        });
 
 		const dateInput = <HTMLInputElement>document.getElementById("dateInput");
-		dateInput.addEventListener("change", () => this.changeDate());
+		dateInput.addEventListener("change", () => {
+            this.changeDate();
+            this.updateSaveButtonColor("dodgerblue");
+        });
 
 		const participantMaxInput = <HTMLInputElement>document.getElementById("participantInput");
-		participantMaxInput.addEventListener("change", () => this.changeParticipantMax());
+		participantMaxInput.addEventListener("change", () => {
+            this.changeParticipantMax();
+            this.updateSaveButtonColor("dodgerblue");
+        });
 
 		const infoInput = <HTMLTextAreaElement>document.getElementById("textInfo");
-		infoInput.addEventListener("change", () => this.changeInfo());
+		infoInput.addEventListener("change", () => {
+            this.changeInfo();
+            this.updateSaveButtonColor("dodgerblue");
+        });
 
 		if (raceEvents.length > 0 || this.raceEvent !== undefined) {
 			this.updateDate();
@@ -52,6 +76,10 @@ class Display {
 			this.updateEventList(raceEvents);
 		}
 	}
+    private updateSaveButtonColor(color: string){
+        const saveBtn = document.getElementById("save-btn");
+        saveBtn.style.backgroundColor = color;
+    }
 
 	public uploadTrackImg(event: Event) {
 		const files = (event.target as HTMLInputElement).files;
@@ -133,7 +161,7 @@ class Display {
 				this.raceEvent = raceEvent;
 				console.log(raceEvent.getId());
 				this.update(this.raceEvent, raceEvents);
-                document.getElementById("save-btn").style.backgroundColor = "dodgerblue";
+                this.updateSaveButtonColor("dodgerblue");
 			});
 		});
 	}
@@ -202,6 +230,8 @@ class Display {
 
 			container.append(item);
 		});
+
+        this.updateSaveButtonColor("dodgerblue");
 	}
 
 	private updateCars() {
@@ -232,6 +262,8 @@ class Display {
 
 			container.append(item);
 		});
+
+        this.updateSaveButtonColor("dodgerblue");
 	}
 
 	private removeElement(event: Event) {
@@ -317,6 +349,8 @@ class Display {
 
 			container.append(item);
 		}
+
+        this.updateSaveButtonColor("dodgerblue");
 	}
 
 	private addTrack() {
