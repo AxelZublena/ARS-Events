@@ -117,8 +117,9 @@ class Dashboard {
 
 	// insert a new raceEvent in db (by calling the server)
 	private async saveToDB() {
-        console.log("saving to db");
+        this.currentRaceEvent = this.display.getCurrentRaceEvent();
 		const data = this.currentRaceEvent.generateJSON();
+        console.log("raceEvent being saved: " + data._id);
 		const options = {
 			method: "POST",
 			headers: {

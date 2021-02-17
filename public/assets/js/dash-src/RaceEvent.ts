@@ -46,6 +46,7 @@ class RaceEvent {
 					console.error(error);
 				});
 		}
+        console.log(this.id + " carImg path: ", this.carImg);
 	}
 
 	public generateJSON() {
@@ -61,6 +62,7 @@ class RaceEvent {
 			eventImg: this.eventImg,
 			_id: this.id
 		};
+        console.log(this.id + " carImg path is : ", this.carImg);
 
 		return json;
 	}

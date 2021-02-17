@@ -71,8 +71,9 @@ class Dashboard {
     }
     saveToDB() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("saving to db");
+            this.currentRaceEvent = this.display.getCurrentRaceEvent();
             const data = this.currentRaceEvent.generateJSON();
+            console.log("raceEvent being saved: " + data._id);
             const options = {
                 method: "POST",
                 headers: {
@@ -578,6 +579,7 @@ class RaceEvent {
                 console.error(error);
             });
         }
+        console.log(this.id + " carImg path: ", this.carImg);
     }
     generateJSON() {
         const json = {
@@ -592,6 +594,7 @@ class RaceEvent {
             eventImg: this.eventImg,
             _id: this.id
         };
+        console.log(this.id + " carImg path is : ", this.carImg);
         return json;
     }
     setDate(date) {
@@ -692,10 +695,6 @@ class RaceEvent {
     }
 }
 window.addEventListener("load", init);
-window.onbeforeunload = function (e) {
-    e = e || window.event;
-    return 'Sure?';
-};
 function init() {
     const dashboard = new Dashboard();
 }

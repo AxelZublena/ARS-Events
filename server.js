@@ -179,10 +179,12 @@ app.post("/login", (request, response) => {
 		//return response.send("Internal server error");
 	//}
 //});
+
 // Image upload
 const imgPath = __dirname + "/public/assets/events-img/";
 app.post("/store-img", (request, response) => {
 	const image = request.files.myFile;
+    //console.log(image);
 	const id = request.body.id;
 	const type = request.body.type;
 	const name = id + "-" + type + ".png";
@@ -240,7 +242,6 @@ app.post("/update", (request, response) => {
 
 	const id = data._id;
 	delete data._id;
-    console.log(id);
 
 	raceEvents.update({ _id: id }, data, {}, async (err, numReplaced) => {
 		if (err) {
@@ -248,7 +249,7 @@ app.post("/update", (request, response) => {
 			response.json({ success: "false" });
 			return 0;
 		}
-		console.log("Entry updated.");
+		console.log(id + ": Entry updated.");
 		response.json({ success: "true" });
 	});
 
