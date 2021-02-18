@@ -37,13 +37,13 @@ class Display {
 
 	public updateEventList(raceEvents: RaceEvent[]) {
 		const container = document.querySelector(".event-container");
-		console.log(container);
+
 		let children = container.children;
-		while (children.length > 1) {
+
+        // clear the container 
+		while (children.length > 0) {
 			const event = children.item(children.length - 1);
-			if (event.id !== "newEvent") {
-				event.remove();
-			}
+            event.remove();
 		}
 
 		raceEvents.forEach((raceEvent) => {
