@@ -39,6 +39,11 @@ app.get("/firstTime", (request, response) => {
 
         raceEvents = new Datastore("./databases/raceEvents.db");
         raceEvents.loadDatabase();
+
+        response.json({
+            status: "success",
+            value: false 
+        });
     }
     else{
         console.log("First time loading, need to setup the admin account. User redirected.");
@@ -277,17 +282,12 @@ app.post("/remove", (request, response) => {
 });
 app.get("/loadEvent", (request, response) => {
     raceEvents.find({}, (err, docs) => {
-        //console.log(docs);
-        console.log("Saved raceEvents sent");
         const raceEvents = docs;
-
         response.json({array: raceEvents});
+        console.log("RaceEvents sent to client.");
     });
 
 });
-
-
-
 
 
 

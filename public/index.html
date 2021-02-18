@@ -27,24 +27,24 @@
 		</header>
 		<div class="app-main">
 			<!---------------------- Events Menu ---------------------->
-			<div class="events">
-				<h3>Evenements</h3>
-				<div class="event-container">
-					<div class="event-main-img">
-						<div class="blur event-img-selected">
-							<p class="event-img-date">27-12-2020</p>
-						</div>
-					</div>
-					<div class="event-main-img">
-						<div class="blur">
-							<p class="event-img-date">06-04-2021</p>
-						</div>
-					</div>
-					<div class="event-main-img add-event-img"></div>
-				</div>
-			</div>
+            <div class="events">
+                <h3>Evenements</h3>
+                <div class="event-container">
+                    <!--<div class="event-main-img">
+                        <div class="blur event-img-selected">
+                            <p class="event-img-date">27-12-2020</p>
+                        </div>
+                    </div>
+                    <div class="event-main-img">
+                        <div class="blur">
+                            <p class="event-img-date">06-04-2021</p>
+                        </div>
+                    </div>-->
+                    <div class="event-main-img add-event-img"></div>
+                </div>
+            </div>
 			<!---------------------- Main Event ---------------------->
-			<div class="event">
+			<!--<div class="event">
 				<div class="event-tile" id="track">
 					<div class="event-tile-img" id="track-img"></div>
 					<div class="event-tile-text" id="track-text">
@@ -204,20 +204,8 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-        <script>
-            fetch("/firstTime")
-                .then((response) => {
-                    console.log(response);
-                    return response.json();
-                })
-                .then((data) => {
-                    if (data.value === true) {
-                        window.location.href = "/firstTimeSetup";
-                    }
-                })
-                .catch((err) => console.log("/firstTime returned: " + err));
-        </script>
+			</div>-->
+        </div>
+        <script src="/assets/js/app.js"></script>
 	</body>
 </html>

@@ -248,7 +248,7 @@ header {
   position: relative;
   content: "";
   background-color: #c4c4c4;
-  background-image: url(/assets/img/plus-sign-80.png);
+  /*background-image: url(/assets/img/plus-sign-80.png);*/
   background-repeat: no-repeat;
   background-size: 50%;
   background-position: center;
