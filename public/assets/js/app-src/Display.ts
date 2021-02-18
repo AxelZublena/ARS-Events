@@ -20,6 +20,7 @@ class Display {
 		const participantButton = document.getElementsByClassName("playerButton-popup")[0];
 		participantButton.addEventListener("click", () => {
 			this.addParticipant();
+            this.saveParticipant();
 		});
 
 		if (raceEvents.length > 0 || this.raceEvent !== undefined) {
@@ -202,6 +203,20 @@ class Display {
 		);
 		this.updateParticipant();
 	}
+    private async saveParticipant() {
+		const data = this.raceEvent.generateJSON();
+        console.log("raceEvent being saved: " + data._id);
+		const options = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(data)
+		};
+		const response = await fetch("/update", options);
+		const json = await response.json();
+		console.log(json);
+    }
 
 	public getCurrentRaceEvent(): RaceEvent {
 		return this.raceEvent;
