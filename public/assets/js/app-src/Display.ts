@@ -113,13 +113,7 @@ class Display {
 				text.style.color = "black";
 			}
 
-			const remove = document.createElement("p");
-			remove.className = "delete-element track-item";
-			remove.innerHTML = "&times";
-
 			item.append(text);
-			item.append(remove);
-
 			container.append(item);
 		});
 	}
@@ -141,13 +135,7 @@ class Display {
 				text.style.color = "black";
 			}
 
-			const remove = document.createElement("p");
-			remove.className = "delete-element car-item";
-			remove.innerHTML = "&times";
-
 			item.append(text);
-			item.append(remove);
-
 			container.append(item);
 		});
 	}
@@ -181,13 +169,7 @@ class Display {
 			player.className = "player";
 			player.innerText = participant;
 
-			const remove = document.createElement("p");
-			remove.className = "delete-element participant-item";
-			remove.innerHTML = "&times";
-
 			item.append(player);
-			item.append(remove);
-
 			container.append(item);
 		});
 

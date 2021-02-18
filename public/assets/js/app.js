@@ -105,11 +105,7 @@ class Display {
             else {
                 text.style.color = "black";
             }
-            const remove = document.createElement("p");
-            remove.className = "delete-element track-item";
-            remove.innerHTML = "&times";
             item.append(text);
-            item.append(remove);
             container.append(item);
         });
     }
@@ -128,11 +124,7 @@ class Display {
             else {
                 text.style.color = "black";
             }
-            const remove = document.createElement("p");
-            remove.className = "delete-element car-item";
-            remove.innerHTML = "&times";
             item.append(text);
-            item.append(remove);
             container.append(item);
         });
     }
@@ -159,11 +151,7 @@ class Display {
             const player = document.createElement("p");
             player.className = "player";
             player.innerText = participant;
-            const remove = document.createElement("p");
-            remove.className = "delete-element participant-item";
-            remove.innerHTML = "&times";
             item.append(player);
-            item.append(remove);
             container.append(item);
         });
         for (let i = 0; i < this.raceEvent.getParticipantMax() - this.raceEvent.getParticipants().length; i++) {
