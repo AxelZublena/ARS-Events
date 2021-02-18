@@ -246,23 +246,19 @@ class Display {
 						<h2>Informations :</h2>
 						<div class="element">
 							<div class="info-element">
-								<p>Date : <span id="infoDate">27-12-2020 a 20h30</span></p>
+								<p>Date : <span id="infoDate"></span></p>
 							</div>
 							<div class="info-element">
 								<p>
-									Participants maximum : <span id="infoParticipantMax">32</span>
+									Participants maximum : <span id="infoParticipantMax"></span>
 								</p>
 							</div>
 							<div class="info-element">
-								<p>Places restantes : <span id="infoPlacesLeft">14</span></p>
+								<p>Places restantes : <span id="infoPlacesLeft"></span></p>
 							</div>
 							<div class="info-element">
 								<p>Détails supplémentaires :<br />
-									<span id="infoText">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-										Morbi vel purus at velit elementum tempor. Ut in ultrices
-										ante, et faucibus metus. Etiam sed eros tempor, posuere
-										purus ut, feugiat ante.</span
-									>
+									<span id="infoText"></span>
 								</p>
 							</div>
 						</div>
@@ -272,67 +268,6 @@ class Display {
 					<div class="event-tile-text" id="participants-text">
 						<h2>Participants :</h2>
 						<div class="players">
-							<div class="item">
-								<p class="player">Bob Panda</p>
-							</div>
-							<div class="item">
-								<p class="player">Taulier</p>
-							</div>
-							<div class="item">
-								<p class="player">Frednz</p>
-							</div>
-							<div class="item">
-								<p class="player">Bob Panda</p>
-							</div>
-							<div class="item">
-								<p class="player">Taulier</p>
-							</div>
-							<div class="item">
-								<p class="player">Frednz</p>
-							</div>
-							<div class="item">
-								<p class="player">Bob Panda</p>
-							</div>
-							<div class="item">
-								<p class="player">Taulier</p>
-							</div>
-							<div class="item">
-								<p class="player">Frednz</p>
-							</div>
-							<div class="item">
-								<p class="player">Bob Panda</p>
-							</div>
-							<div class="item">
-								<p class="player">Taulier</p>
-							</div>
-							<div class="item">
-								<p class="player">Frednz</p>
-							</div>
-							<div class="item empty-place">
-								<a class="playerButton" href="#popupPlayer">
-									<p class="add-element">&#43;</p>
-								</a>
-							</div>
-							<div class="item empty-place">
-								<a class="playerButton" href="#popupPlayer">
-									<p class="add-element">&#43;</p>
-								</a>
-							</div>
-							<div class="item empty-place">
-								<a class="playerButton" href="#popupPlayer">
-									<p class="add-element">&#43;</p>
-								</a>
-							</div>
-							<div class="item empty-place">
-								<a class="playerButton" href="#popupPlayer">
-									<p class="add-element">&#43;</p>
-								</a>
-							</div>
-							<div class="item empty-place">
-								<a class="playerButton" href="#popupPlayer">
-									<p class="add-element">&#43;</p>
-								</a>
-							</div>
 						</div>
 						<div id="popupPlayer" class="overlay">
 							<div class="popup" id="addPlayer">
