@@ -1,3 +1,3 @@
 node_modules/
 databases/
-public/assets/events-img/
+*.png
