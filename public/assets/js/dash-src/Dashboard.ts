@@ -50,7 +50,7 @@ class Dashboard {
                     this.saveToDB()
                 });
 
-                console.log("test " + this.currentRaceEvent.getId());
+                //console.log("test " + this.currentRaceEvent.getId());
 
                 // event listener doesn't update the value
                 const deleteButton = document.getElementById("delete-btn");
@@ -110,9 +110,8 @@ class Dashboard {
 		this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
 
 		this.display.update(this.currentRaceEvent, this.raceEvents);
-
-
-        this.saveButton.style.backgroundColor = "dodgerblue";
+        this.saveToDB();
+        //this.saveButton.style.backgroundColor = "dodgerblue";
 	}
 
 	// insert a new raceEvent in db (by calling the server)
@@ -158,10 +157,11 @@ class Dashboard {
 
         this.raceEvents.splice(this.raceEvents.indexOf(this.currentRaceEvent), 1);
         this.raceEvents.sort((a,b) => b.getDateObject().getTime() - a.getDateObject().getTime());
+        //console.log(this.raceEvents);
         this.currentRaceEvent = this.raceEvents[0];
+        //console.log(this.currentRaceEvent);
         this.display.update(this.currentRaceEvent, this.raceEvents);
 
-        console.log(this.raceEvents);
 	}
 
     public getSaveButton(){
