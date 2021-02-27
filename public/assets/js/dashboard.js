@@ -160,7 +160,7 @@ class Display {
                 this.changeDate();
                 this.updateSaveButtonColor("dodgerblue");
             });
-            const participantMaxInput = document.getElementById("participantInput");
+            const participantMaxInput = (document.getElementById("participantInput"));
             participantMaxInput.addEventListener("change", () => {
                 this.changeParticipantMax();
                 this.updateSaveButtonColor("dodgerblue");
@@ -248,7 +248,10 @@ class Display {
             }
             const date = document.createElement("p");
             date.className = "event-img-date";
-            date.innerText = raceEvent.getDate();
+            const dateObject = raceEvent.getDateObject();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const localDate = dateObject.toLocaleDateString("fr-FR", options);
+            date.innerText = localDate.charAt(0).toUpperCase() + localDate.slice(1);
             blur.append(date);
             main.append(blur);
             container.append(main);

@@ -94,7 +94,10 @@ class Display {
             }
             const date = document.createElement("p");
             date.className = "event-img-date";
-            date.innerText = raceEvent.getDate();
+            const dateObject = raceEvent.getDateObject();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const localDate = dateObject.toLocaleDateString("fr-FR", options);
+            date.innerText = localDate.charAt(0).toUpperCase() + localDate.slice(1);
             blur.append(date);
             main.append(blur);
             container.append(main);
@@ -107,7 +110,11 @@ class Display {
     }
     updateDate() {
         const field = document.getElementById("infoDate");
-        field.innerText = this.raceEvent.getDate().toString();
+        const dateObject = this.raceEvent.getDateObject();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const localDate = dateObject.toLocaleDateString("fr-FR", options);
+        const localTime = dateObject.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' });
+        field.innerText = localDate.charAt(0).toUpperCase() + localDate.slice(1) + " à " + localTime;
     }
     updateParticipantMax() {
         const field = document.getElementById("infoParticipantMax");

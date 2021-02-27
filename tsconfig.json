@@ -5,11 +5,11 @@
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "removeComments": true,
-        "outFile": "public/assets/js/dashboard.js",
+        "outFile": "public/assets/js/app.js",
         "noEmitOnError": true
     },
     "include": [
-        "public/assets/js/dash-src/**/*"
+        "public/assets/js/app-src/**/*"
     ],
     "exclude": [
         "node_modules",
