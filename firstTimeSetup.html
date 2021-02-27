@@ -12,12 +12,12 @@
 
 		<link rel="stylesheet" href="/assets/css/style.css" />
 		<link rel="stylesheet" href="/assets/css/login.css" />
-		<title>Login</title>
+		<title>Connexion</title>
 	</head>
 	<body>
 		<header>
 			<a href="/" id="logo-ars">ars</a>
-			<h1 id="dash">First Time Setup</h1>
+			<h1 id="dash">Installation</h1>
 			<a href="/admin" id="login-icon"
 				><img
 					src="/assets/img/user.png"
@@ -27,18 +27,18 @@
 		</header>
         <div id="content">
             <div id="information">
-                <p>Enter the username and password used to create the admin account.<br>This action is required only once.</p>
+                <p>Entrez un nom d'utilisateur et un mot de passe pour créer le compte administrateur.<br>Cette action n'est requise qu'une seule fois.</p>
             </div>
             <form action="/setCredentials" method="POST" class="tile">
                 <div class="options" id="dashboard">
-                    <h2>Username :</h2>
+                    <h2>Nom d'utilisateur :</h2>
                     <input type="text" id="username" name="username" required />
                 </div>
                 <div class="options" id="dashboard">
-                    <h2>Password :</h2>
+                    <h2>Mot de passe :</h2>
                     <input type="password" id="password" name="password" required />
                 </div>
-                <button type="submit">Create</button>
+                <button type="submit">Créer</button>
             </form>
         </div>
 	</body>
