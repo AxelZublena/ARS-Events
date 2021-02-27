@@ -13,7 +13,7 @@ class RaceEvent {
 	private eventImg: string;
 	private info: string;
 
-	public constructor(tracks: Array<any>, cars: Array<any>, trackImg: string, carImg: string, participants: string[], maxParticipants: number, date: Date, eventImg: string, info: string, id = "") {
+	public constructor(tracks: Array<any> = [], cars: Array<any> = [], trackImg: string = "", carImg: string = "", participants: string[] = [], maxParticipants: number = 24, date: Date = new Date(), eventImg: string = "", info: string = "", id = "") {
 
         this.tracks = tracks;
         this.cars = cars;

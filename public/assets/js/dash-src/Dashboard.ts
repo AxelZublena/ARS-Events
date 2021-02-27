@@ -50,63 +50,16 @@ class Dashboard {
                     this.saveToDB()
                 });
 
-                //console.log("test " + this.currentRaceEvent.getId());
-
                 // event listener doesn't update the value
                 const deleteButton = document.getElementById("delete-btn");
                 deleteButton.addEventListener("click", () => this.removeFromDB());
-                //deleteButton.addEventListener("click", () => console.log("raceEvent to delete: " + this.currentRaceEvent.getId()));
             });
 
 	}
 
 	private newEvent(): void {
-		const tracks = [
-			{
-				name: "Adria Karting Raceway (Paid DLC – KartSim)",
-				link: "https://steamcommunity.com/workshop/about/?appid=365960"
-			},
-			{
-				name: "Adria Karting Raceway (Paid DLC – KartSim)",
-				link: "https://steamcommunity.com/workshop/about/?appid=365960"
-			}
-		];
-		const cars = [
-			{
-				name: "2019 Aston Martin Vantage GT3 (Paid DLC)",
-				link: "https://steamcommunity.com/workshop/about/?appid=365960"
-			},
-			{
-				name: "2020 Bentley Continental GT3 (Paid DLC)",
-				link: ""
-			}
-		];
-		const trackImg = "/assets/img/rf2.jpg";
-		const carImg = "/assets/img/rf2.jpg";
+        this.raceEvents.unshift(new RaceEvent);
 
-		const participants = ["Bob Panda", "Taulier", "Frednz"];
-		const maxParticipants = 24;
-
-		// months range: 0-11
-        //const date = new Date(2020, 11, 19, 20, 30, 0, 0);
-        const date = new Date();
-		const eventImg = "/assets/img/rf2.jpg";
-		const info =
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
-
-		this.raceEvents.unshift(
-			new RaceEvent(
-				tracks,
-				cars,
-				trackImg,
-				carImg,
-				participants,
-				maxParticipants,
-				date,
-				eventImg,
-				info
-			)
-		);
 		this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
 
 		this.display.update(this.currentRaceEvent, this.raceEvents);

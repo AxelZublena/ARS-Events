@@ -160,9 +160,9 @@ class Display {
 			const date = document.createElement("p");
 			date.className = "event-img-date";
 			const dateObject = raceEvent.getDateObject();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const options = { weekday: 'long',  month: 'long', day: 'numeric' };
             const localDate = dateObject.toLocaleDateString("fr-FR", options);
-            date.innerText = localDate.charAt(0).toUpperCase() + localDate.slice(1);
+            date.innerText = localDate.charAt(0).toUpperCase() + localDate.slice(1) + "\n" + dateObject.getFullYear();
 
 			blur.append(date);
 			main.append(blur);

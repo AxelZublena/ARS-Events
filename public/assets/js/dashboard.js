@@ -36,34 +36,7 @@ class Dashboard {
         });
     }
     newEvent() {
-        const tracks = [
-            {
-                name: "Adria Karting Raceway (Paid DLC – KartSim)",
-                link: "https://steamcommunity.com/workshop/about/?appid=365960"
-            },
-            {
-                name: "Adria Karting Raceway (Paid DLC – KartSim)",
-                link: "https://steamcommunity.com/workshop/about/?appid=365960"
-            }
-        ];
-        const cars = [
-            {
-                name: "2019 Aston Martin Vantage GT3 (Paid DLC)",
-                link: "https://steamcommunity.com/workshop/about/?appid=365960"
-            },
-            {
-                name: "2020 Bentley Continental GT3 (Paid DLC)",
-                link: ""
-            }
-        ];
-        const trackImg = "/assets/img/rf2.jpg";
-        const carImg = "/assets/img/rf2.jpg";
-        const participants = ["Bob Panda", "Taulier", "Frednz"];
-        const maxParticipants = 24;
-        const date = new Date();
-        const eventImg = "/assets/img/rf2.jpg";
-        const info = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus leo vel massa facilisis, et imperdiet ipsum dictum. Cras ullamcorper placerat ligula, aliquam mollis erat tempus a.";
-        this.raceEvents.unshift(new RaceEvent(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info));
+        this.raceEvents.unshift(new RaceEvent);
         this.currentRaceEvent = this.raceEvents[this.raceEvents.length - 1];
         this.display.update(this.currentRaceEvent, this.raceEvents);
         this.saveToDB();
@@ -249,9 +222,9 @@ class Display {
             const date = document.createElement("p");
             date.className = "event-img-date";
             const dateObject = raceEvent.getDateObject();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
             const localDate = dateObject.toLocaleDateString("fr-FR", options);
-            date.innerText = localDate.charAt(0).toUpperCase() + localDate.slice(1);
+            date.innerText = localDate.charAt(0).toUpperCase() + localDate.slice(1) + "\n" + dateObject.getFullYear();
             blur.append(date);
             main.append(blur);
             container.append(main);
@@ -556,7 +529,7 @@ class Display {
     }
 }
 class RaceEvent {
-    constructor(tracks, cars, trackImg, carImg, participants, maxParticipants, date, eventImg, info, id = "") {
+    constructor(tracks = [], cars = [], trackImg = "", carImg = "", participants = [], maxParticipants = 24, date = new Date(), eventImg = "", info = "", id = "") {
         this.tracks = tracks;
         this.cars = cars;
         this.trackImg = trackImg;
