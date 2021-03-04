@@ -1,12 +1,5 @@
-# SimracingWebsite
+# Amateur Racing Simulateur Events
 
-Web app to manage your different simracing events. Manage your events, the content required for envents, the participants, the date and much more.
+Custom web app to manage different simracing events. Manage your events, the content required for envents, the participants, the date and much more. Built with Node JS, Typescript and Express.js. 
 
-## Installation
-
-Install the app on a web server like Heroku.
-
-## Usage
-
-To login as an admin, use this url: `sim-web.app/admin`. The default credentials are `Username: 123` and `Password: 123`.
-Once logged in, change the username and the password by using the url: `sim-web.app/admin`.
+![preview](https://i.ibb.co/q1Jkpqj/2021-03-04-16-12.png)
